@@ -8,6 +8,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * ----------------------------------------------------------------------------
- * Iskra.js-specific pin namings
+ * Iskra JS-specific pin namings
  * ----------------------------------------------------------------------------
  */
