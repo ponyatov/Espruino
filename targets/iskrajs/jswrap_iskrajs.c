@@ -11,7 +11,7 @@
  * ----------------------------------------------------------------------------
  * This file is designed to be parsed during the build process
  *
- * Iskra.js-specific pin namings
+ * Iskra JS-specific pin namings
  * ----------------------------------------------------------------------------
  */
 
