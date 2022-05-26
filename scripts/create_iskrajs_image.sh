@@ -32,7 +32,7 @@ make || { echo 'Build failed (espruino)' ; exit 1; }
 
 echo Create UF2 file
 echo ---------------------
-./scripts/uf2conv.py -c -b 0x08008000 -f STM32F4 $ESPRUINOFILE -o $IMGFILE  || { echo 'Build failed (uf2)' ; exit 1; }
+./scripts/uf2conv.py --convert --base 0x08008000 --family STM32F4 $ESPRUINOFILE --output $IMGFILE  || { echo 'Build failed (uf2)' ; exit 1; }
 
 echo ---------------------
 echo Finished!

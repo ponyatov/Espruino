@@ -24,6 +24,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Docs https://github.com/microsoft/uf2/blob/master/utils/uf2conv.md
+
 import sys
 import struct
 import subprocess
