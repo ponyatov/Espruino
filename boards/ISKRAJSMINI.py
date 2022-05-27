@@ -24,6 +24,7 @@ info = {
  'default_console_rx' : "B7",
  'variables' : 7423, # (128-12)*1024/16-1
  'bootloader' : 0,
+ 'flash_base': 0x08008000,
  'binary_name' : 'espruino_%v_iskrajs_mini.bin',
  'build' : {
    'optimizeflags' : '-Os',
