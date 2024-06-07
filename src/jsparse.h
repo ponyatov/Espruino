@@ -38,7 +38,7 @@ bool jspCheckStackPosition();
 JsVar *jspNewBuiltin(const char *name);
 
 /// Create a new Class of the given instance and return its prototype (as a name 'prototype')
-NO_INLINE JsVar *jspNewPrototype(const char *instanceOf);
+NO_INLINE JsVar *jspNewPrototype(const char *instanceOf, bool returnObject);
 
 /** Create a new object of the given instance and add it to root with name 'name'.
  * If name!=0, added to root with name, and the name is returned
@@ -55,7 +55,7 @@ bool jspHasError();
 void jspSetError(bool lineReported);
 /// We had an exception (argument is the exception's value)
 void jspSetException(JsVar *value);
-/** Return the reported exception if there was one (and clear it) */
+/** Return the reported exception if there was one (and clear it). May return undefined even if there was an exception - eg `throw undefined` */
 JsVar *jspGetException();
 /** Return a stack trace string if there was one (and clear it) */
 JsVar *jspGetStackTrace();
@@ -134,17 +134,31 @@ typedef struct {
   JsVar  *root;       //!< root of symbol table
   JsVar  *hiddenRoot; //!< root of the symbol table that's hidden
 
-  /// JsVar array of scopes
+  /// JsVar array of all execution scopes (`root` is not included)
   JsVar *scopesVar;
+#ifndef ESPR_NO_LET_SCOPING
+  /// This is the base scope of execution - `root`, or the execution scope of the function. Scopes added for let/const are not included
+  JsVar *baseScope;
+  /// IF nonzero, this the scope of the current block (which gets added when 'let/const' is used in a block)
+  JsVar *blockScope;
+  /// how many blocks '{}' deep are we?
+  uint8_t blockCount;
+#endif
   /// Value of 'this' reserved word
   JsVar *thisVar;
+#ifndef ESPR_NO_CLASSES
+  // Allows 'super' to call 'super' on the correct class on subclasses - see #1529
+  JsVar *currentClassConstructor;
+#endif
 
-  volatile JsExecFlags execute;
+  volatile JsExecFlags execute; //!< Should we be executing, do we have errors, etc
 } JsExecInfo;
 
 /* Info about execution when Parsing - this saves passing it on the stack
  * for each call */
 extern JsExecInfo execInfo;
+
+#define JSP_SHOULD_EXECUTE (((execInfo.execute)&EXEC_RUN_MASK)==EXEC_YES)
 
 /// flags for jspParseFunction
 typedef enum {
@@ -189,13 +203,6 @@ JsVar *jspGetNamedVariable(const char *tokenName);
  * a symbol rather than a variable. To handle these use jspGetVarNamedField  */
 JsVar *jspGetNamedField(JsVar *object, const char* name, bool returnName);
 JsVar *jspGetVarNamedField(JsVar *object, JsVar *nameVar, bool returnName);
-
-/** Call the function named on the given object. For example you might call:
- *
- *  JsVar *str = jspCallNamedFunction(var, "toString", 0, 0);
- */
-JsVar *jspCallNamedFunction(JsVar *object, char* name, int argCount, JsVar **argPtr);
-
 
 // These are exported for the Web IDE's compiler. See exportPtrs in jswrap_process.c
 JsVar *jspeiFindInScopes(const char *name);

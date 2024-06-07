@@ -29,11 +29,12 @@
   "ifndef" : "SAVE_ON_FLASH",
   "class" : "Waveform"
 }
-This class handles waveforms. In Espruino, a Waveform is a set of data that you want to input or output.
+This class handles waveforms. In Espruino, a Waveform is a set of data that you
+want to input or output.
  */
 
 static JsVar *jswrap_waveform_getBuffer(JsVar *waveform, int bufferNumber, bool *is16Bit) {
-  JsVar *buffer = jsvObjectGetChild(waveform, (bufferNumber==0)?"buffer":"buffer2", 0);
+  JsVar *buffer = jsvObjectGetChildIfExists(waveform, (bufferNumber==0)?"buffer":"buffer2");
   if (!buffer) return 0;
   if (is16Bit) {
     *is16Bit = false;
@@ -53,21 +54,21 @@ static JsVar *jswrap_waveform_getBuffer(JsVar *waveform, int bufferNumber, bool 
   "ifndef" : "SAVE_ON_FLASH"
 }*/
 bool jswrap_waveform_idle() {
-  JsVar *waveforms = jsvObjectGetChild(execInfo.hiddenRoot, JSI_WAVEFORM_NAME, 0);
+  JsVar *waveforms = jsvObjectGetChildIfExists(execInfo.hiddenRoot, JSI_WAVEFORM_NAME);
   if (waveforms) {
     JsvObjectIterator it;
     jsvObjectIteratorNew(&it, waveforms);
     while (jsvObjectIteratorHasValue(&it)) {
       JsVar *waveform = jsvObjectIteratorGetValue(&it);
 
-      bool running = jsvGetBoolAndUnLock(jsvObjectGetChild(waveform, "running", 0));
+      bool running = jsvObjectGetBoolChild(waveform, "running");
       if (running) {
         JsVar *buffer = jswrap_waveform_getBuffer(waveform,0,0);
         UtilTimerTask task;
         // Search for a timer task
         if (!jstGetLastBufferTimerTask(buffer, &task)) {
           // if the timer task is now gone...
-          JsVar *arrayBuffer = jsvObjectGetChild(waveform, "buffer", 0);
+          JsVar *arrayBuffer = jsvObjectGetChildIfExists(waveform, "buffer");
           jsiQueueObjectCallbacks(waveform, JS_EVENT_PREFIX"finish", &arrayBuffer, 1);
           jsvUnLock(arrayBuffer);
           running = false;
@@ -82,7 +83,7 @@ bool jswrap_waveform_idle() {
             if (oldBuffer != currentBuffer) {
               // buffers have changed - fire off a 'buffer' event with the buffer that needs to be filled
               jsvObjectSetChildAndUnLock(waveform, "currentBuffer", jsvNewFromInteger(currentBuffer));
-              JsVar *arrayBuffer = jsvObjectGetChild(waveform, (currentBuffer==0) ? "buffer2" : "buffer", 0);
+              JsVar *arrayBuffer = jsvObjectGetChildIfExists(waveform, (currentBuffer==0) ? "buffer2" : "buffer");
               jsiQueueObjectCallbacks(waveform, JS_EVENT_PREFIX"buffer", &arrayBuffer, 1);
               jsvUnLock(arrayBuffer);
             }
@@ -109,13 +110,13 @@ bool jswrap_waveform_idle() {
   "ifndef" : "SAVE_ON_FLASH"
 }*/
 void jswrap_waveform_kill() { // be sure to remove all waveforms...
-  JsVar *waveforms = jsvObjectGetChild(execInfo.hiddenRoot, JSI_WAVEFORM_NAME, 0);
+  JsVar *waveforms = jsvObjectGetChildIfExists(execInfo.hiddenRoot, JSI_WAVEFORM_NAME);
   if (waveforms) {
     JsvObjectIterator it;
     jsvObjectIteratorNew(&it, waveforms);
     while (jsvObjectIteratorHasValue(&it)) {
       JsVar *waveform = jsvObjectIteratorGetValue(&it);
-      bool running = jsvGetBoolAndUnLock(jsvObjectGetChild(waveform, "running", 0));
+      bool running = jsvObjectGetBoolChild(waveform, "running");
       if (running) {
         JsVar *buffer = jswrap_waveform_getBuffer(waveform,0,0);
         if (!jstStopBufferTimerTask(buffer)) {
@@ -145,9 +146,13 @@ void jswrap_waveform_kill() { // be sure to remove all waveforms...
   ],
   "return" : ["JsVar","An Waveform object"]
 }
-Create a waveform class. This allows high speed input and output of waveforms. It has an internal variable called `buffer` (as well as `buffer2` when double-buffered - see `options` below) which contains the data to input/output.
+Create a waveform class. This allows high speed input and output of waveforms.
+It has an internal variable called `buffer` (as well as `buffer2` when
+double-buffered - see `options` below) which contains the data to input/output.
 
-When double-buffered, a 'buffer' event will be emitted each time a buffer is finished with (the argument is that buffer). When the recording stops, a 'finish' event will be emitted (with the first argument as the buffer).
+When double-buffered, a 'buffer' event will be emitted each time a buffer is
+finished with (the argument is that buffer). When the recording stops, a
+'finish' event will be emitted (with the first argument as the buffer).
  */
 JsVar *jswrap_waveform_constructor(int samples, JsVar *options) {
   if (samples<=0) {
@@ -158,9 +163,9 @@ JsVar *jswrap_waveform_constructor(int samples, JsVar *options) {
   bool doubleBuffer = false;
   bool use16bit = false;
   if (jsvIsObject(options)) {
-    doubleBuffer = jsvGetBoolAndUnLock(jsvObjectGetChild(options, "doubleBuffer", 0));
+    doubleBuffer = jsvObjectGetBoolChild(options, "doubleBuffer");
 
-    int bits = (int)jsvGetIntegerAndUnLock(jsvObjectGetChild(options, "bits", 0));
+    int bits = (int)jsvObjectGetIntegerChild(options, "bits");
     if (bits!=0 && bits!=8 && bits!=16) {
       jsExceptionHere(JSET_ERROR, "Invalid number of bits");
       return 0;
@@ -188,7 +193,7 @@ JsVar *jswrap_waveform_constructor(int samples, JsVar *options) {
 }
 
 static void jswrap_waveform_start(JsVar *waveform, Pin pin, JsVarFloat freq, JsVar *options, bool isWriting) {
-  bool running = jsvGetBoolAndUnLock(jsvObjectGetChild(waveform, "running", 0));
+  bool running = jsvObjectGetBoolChild(waveform, "running");
   if (running) {
     jsExceptionHere(JSET_ERROR, "Waveform is already running");
     return;
@@ -205,10 +210,10 @@ static void jswrap_waveform_start(JsVar *waveform, Pin pin, JsVarFloat freq, JsV
   JsSysTime startTime = 0;
   bool repeat = false;
   if (jsvIsObject(options)) {
-    JsVarFloat t = jsvGetFloatAndUnLock(jsvObjectGetChild(options, "time", 0));
+    JsVarFloat t = jsvObjectGetFloatChild(options, "time");
     if (isfinite(t) && t>0)
       startTime = jshGetTimeFromMilliseconds(t*1000) - jshGetSystemTime();
-    repeat = jsvGetBoolAndUnLock(jsvObjectGetChild(options, "repeat", 0));
+    repeat = jsvObjectGetBoolChild(options, "repeat");
   } else if (!jsvIsUndefined(options)) {
     jsExceptionHere(JSET_ERROR, "Expecting options to be undefined or an Object, not %t", options);
   }
@@ -253,7 +258,9 @@ static void jswrap_waveform_start(JsVar *waveform, Pin pin, JsVarFloat freq, JsV
     ["options","JsVar","Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample"]
   ]
 }
-Will start outputting the waveform on the given pin - the pin must have previously been initialised with analogWrite. If not repeating, it'll emit a `finish` event when it is done.
+Will start outputting the waveform on the given pin - the pin must have
+previously been initialised with analogWrite. If not repeating, it'll emit a
+`finish` event when it is done.
  */
 void jswrap_waveform_startOutput(JsVar *waveform, Pin pin, JsVarFloat freq, JsVar *options) {
   jswrap_waveform_start(waveform, pin, freq, options, true/*write*/);
@@ -271,7 +278,8 @@ void jswrap_waveform_startOutput(JsVar *waveform, Pin pin, JsVarFloat freq, JsVa
     ["options","JsVar","Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample"]
   ]
 }
-Will start inputting the waveform on the given pin that supports analog. If not repeating, it'll emit a `finish` event when it is done.
+Will start inputting the waveform on the given pin that supports analog. If not
+repeating, it'll emit a `finish` event when it is done.
  */
 void jswrap_waveform_startInput(JsVar *waveform, Pin pin, JsVarFloat freq, JsVar *options) {
   // Setup analog, and also bail out on failure
@@ -290,7 +298,7 @@ void jswrap_waveform_startInput(JsVar *waveform, Pin pin, JsVarFloat freq, JsVar
 Stop a waveform that is currently outputting
  */
 void jswrap_waveform_stop(JsVar *waveform) {
-  bool running = jsvGetBoolAndUnLock(jsvObjectGetChild(waveform, "running", 0));
+  bool running = jsvObjectGetBoolChild(waveform, "running");
   if (!running) {
     jsExceptionHere(JSET_ERROR, "Waveform is not running");
     return;

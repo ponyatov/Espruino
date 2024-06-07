@@ -198,10 +198,16 @@ typedef enum {
 /// Output an analog value on a pin - either via DAC, hardware PWM, or software PWM
 JshPinFunction jshPinAnalogOutput(Pin pin, JsVarFloat value, JsVarFloat freq, JshAnalogOutputFlags flags); // if freq<=0, the default is used
 
+/// Flags for jshPinAnalogOutput
+typedef enum {
+  JSPW_NONE,
+  JSPW_HIGH_SPEED = 1,  ///< Should use high accuracy if available (higher power draw)
+} JshPinWatchFlags;
+
 /// Can the given pin be watched? it may not be possible because of conflicts
 bool jshCanWatch(Pin pin);
 /// start watching pin - return the EXTI (IRQ number flag) associated with it
-IOEventFlags jshPinWatch(Pin pin, bool shouldWatch);
+IOEventFlags jshPinWatch(Pin pin, bool shouldWatch, JshPinWatchFlags flags);
 
 /// Given a Pin, return the current pin function associated with it
 JshPinFunction jshGetCurrentPinFunction(Pin pin);
@@ -215,6 +221,12 @@ void jshEnableWatchDog(JsVarFloat timeout);
 
 // Kick the watchdog
 void jshKickWatchDog();
+
+/* Sometimes we allow a Ctrl-C or button press (eg. Bangle.js) to cause an interruption if there
+is no response from the interpreter, and that interruption can then break out of Flash Writes
+for instance. But there are certain things (like compaction) that we REALLY don't want to
+break out of, so they can call jshKickSoftWatchDog to stop it. */
+void jshKickSoftWatchDog();
 
 /// Check the pin associated with this EXTI - return true if the pin's input is a logic 1
 bool jshGetWatchedPinState(IOEventFlags device);
@@ -353,6 +365,8 @@ bool jshFlashGetPage(uint32_t addr, uint32_t *startAddr, uint32_t *pageSize);
 JsVar *jshFlashGetFree();
 /// Erase the flash page containing the address
 void jshFlashErasePage(uint32_t addr);
+/// Erase the flash pages containing the address - return true on success
+bool jshFlashErasePages(uint32_t addr, uint32_t byteLength);
 /** Read data from flash memory into the buffer, the flash address has no alignment restrictions
   * and the len may be (and often is) 1 byte */
 void jshFlashRead(void *buf, uint32_t addr, uint32_t len);
@@ -411,6 +425,8 @@ void jshSetupRTCPrescalerValue(unsigned int prescale);
 int jshGetRTCPrescalerValue(bool calibrate);
 // Reset timers and average systick duration counters for RTC - when coming out of sleep or changing prescaler
 void jshResetRTCTimer();
+/// Flags that we've been able to send data down USB, so it's ok to have data in the output buffer
+void jshClearUSBIdleTimeout();
 #endif
 
 #if defined(NRF51_SERIES) || defined(NRF52_SERIES)
@@ -436,6 +452,9 @@ unsigned int jshGetRandomNumber();
  * to match what gets implemented here. The return value is the clock
  * speed in Hz though. */
 unsigned int jshSetSystemClock(JsVar *options);
+
+/* Adds the estimated power usage of the microcontroller in uA to the 'devices' object. The CPU should be called 'CPU' */
+void jsvGetProcessorPowerUsage(JsVar *devices);
 
 /// Perform a proper hard-reboot of the device
 void jshReboot();
@@ -470,7 +489,8 @@ JshPinState jshVirtualPinGetState(Pin pin);
 #define WAIT_UNTIL(CONDITION, REASON) { \
     int timeout = WAIT_UNTIL_N_CYCLES;                                              \
     while (!(CONDITION) && !jspIsInterrupted() && (timeout--)>0);                  \
-    if (timeout<=0 || jspIsInterrupted()) { jsExceptionHere(JSET_INTERNALERROR, "Timeout on " REASON); }  \
+    if (jspIsInterrupted()) { jsExceptionHere(JSET_INTERNALERROR, "Interrupted in " REASON); }  \
+    else if (timeout<=0) { jsExceptionHere(JSET_INTERNALERROR, "Timeout on " REASON ); }  \
 }
 
 #endif /* JSHARDWARE_H_ */

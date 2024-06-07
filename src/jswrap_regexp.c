@@ -275,7 +275,8 @@ static JsVar *matchhere(char *regexp, JsvStringIterator *txtIt, matchInfo info) 
 The built-in class for handling Regular Expressions
 
 **Note:** Espruino's regular expression parser does not contain all the features
-present in a full ES6 JS engine. However it does contain support for the all the basics.
+present in a full ES6 JS engine. However it does contain support for the all the
+basics.
 */
 
 /*JSON{
@@ -286,10 +287,14 @@ present in a full ES6 JS engine. However it does contain support for the all the
   "generate" : "jswrap_regexp_constructor",
   "params" : [
     ["regex","JsVar","A regular expression as a string"],
-    ["regex","JsVar","Flags for the regular expression as a string"]
+    ["flags","JsVar","Flags for the regular expression as a string"]
   ],
   "return" : ["JsVar","A RegExp object"],
-  "return_object" : "RegExp"
+  "return_object" : "RegExp",
+  "typescript" : [
+    "new(...value: any[]): RegExp;",
+    "(value: any): RegExp;"
+  ]
 }
 Creates a RegExp object, for handling Regular Expressions
  */
@@ -321,7 +326,8 @@ JsVar *jswrap_regexp_constructor(JsVar *str, JsVar *flags) {
   "generate" : "jswrap_regexp_exec",
   "return" : ["JsVar","A result array, or null"]
 }
-Test this regex on a string - returns a result array on success, or `null` otherwise.
+Test this regex on a string - returns a result array on success, or `null`
+otherwise.
 
 
 `/Wo/.exec("Hello World")` will return:
@@ -347,9 +353,9 @@ Or with groups `/W(o)rld/.exec("Hello World")` returns:
  */
 JsVar *jswrap_regexp_exec(JsVar *parent, JsVar *arg) {
   JsVar *str = jsvAsString(arg);
-  JsVarInt lastIndex = jsvGetIntegerAndUnLock(jsvObjectGetChild(parent, "lastIndex", 0));
-  JsVar *regex = jsvObjectGetChild(parent, "source", 0);
-  if (!jsvIsString(regex) || lastIndex>jsvGetStringLength(str)) {
+  JsVarInt lastIndex = jsvObjectGetIntegerChild(parent, "lastIndex");
+  JsVar *regex = jsvObjectGetChildIfExists(parent, "source");
+  if (!jsvIsString(regex) || lastIndex>(JsVarInt)jsvGetStringLength(str)) {
     jsvUnLock2(str,regex);
     return 0;
   }
@@ -370,7 +376,7 @@ JsVar *jswrap_regexp_exec(JsVar *parent, JsVar *arg) {
     // if it's global, set lastIndex
     if (jswrap_regexp_hasFlag(parent,'g')) {
       JsVar *matchStr = jsvGetArrayItem(rmatch,0);
-      lastIndex = jsvGetIntegerAndUnLock(jsvObjectGetChild(rmatch, "index", 0)) +
+      lastIndex = jsvObjectGetIntegerChild(rmatch, "index") +
                   (JsVarInt)jsvGetStringLength(matchStr);
       jsvUnLock(matchStr);
     } else
@@ -391,7 +397,8 @@ JsVar *jswrap_regexp_exec(JsVar *parent, JsVar *arg) {
   "generate" : "jswrap_regexp_test",
   "return" : ["bool","true for a match, or false"]
 }
-Test this regex on a string - returns `true` on a successful match, or `false` otherwise
+Test this regex on a string - returns `true` on a successful match, or `false`
+otherwise
  */
 bool jswrap_regexp_test(JsVar *parent, JsVar *str) {
   JsVar *v = jswrap_regexp_exec(parent, str);
@@ -402,7 +409,7 @@ bool jswrap_regexp_test(JsVar *parent, JsVar *str) {
 
 /// Does this regex have the given flag?
 bool jswrap_regexp_hasFlag(JsVar *parent, char flag) {
-  JsVar *flags = jsvObjectGetChild(parent, "flags", 0);
+  JsVar *flags = jsvObjectGetChildIfExists(parent, "flags");
   bool has = false;
   if (jsvIsString(flags)) {
     JsvStringIterator it;

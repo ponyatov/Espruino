@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This file is part of Espruino, a JavaScript interpreter for Microcontrollers
 #
@@ -14,8 +14,7 @@
 # ----------------------------------------------------------------------------------------
 
 # Needs:
-#    pip install markdown
-#    pip install markdown-urlize
+#    pip install markdown2
 #
 # See common.py -> get_jsondata for command line options
 
@@ -25,9 +24,9 @@ import json;
 import sys;
 import os;
 import common
-import urllib2
-import markdown
-import htmlentitydefs
+import urllib3
+import markdown2
+import html.entities as htmlentitydefs
 
 sys.path.append(".");
 scriptdir = os.path.dirname(os.path.realpath(__file__))
@@ -45,6 +44,7 @@ sys.path.append(basedir+"boards");
 # --- skipping MDN links dump and validation to complete quicker
 
 htmldev = False
+http = urllib3.PoolManager()
 
 jsondatas = common.get_jsondata(True)
 
@@ -72,11 +72,13 @@ if os.path.isfile(mdnURLFile):
   valid_mdn_urls = json.loads(open(mdnURLFile, "r").read())
 
 # start writing
-htmlFile = open('functions.html', 'w')
-def html(s): htmlFile.write(s+"\n");
+htmlFile = open('functions.html', 'w', encoding="utf-8")
+def html(s):
+  print(s);
+  htmlFile.write(s +"\n");
 
 def htmlify(d,current):
-  d = markdown.markdown(d, extensions=['urlize'], tab_length=2)
+  d = markdown2.markdown(text=d, extras=["tables"])
   # replace <code> with newlines with pre
   idx = d.find("<code>")
   end = d.find("</code>", idx)
@@ -132,7 +134,7 @@ def get_surround(jsondata):
   s = common.get_prefix_name(jsondata)
   if s!="": s = s + " "
   if jsondata["type"]!="constructor":
-    if "class" in jsondata: 
+    if "class" in jsondata:
       if jsondata["class"] in libraries: s=s+"require(\""+jsondata["class"]+"\")."
       else: s=s+jsondata["class"]+"."
   s=s+jsondata["name"]
@@ -180,11 +182,11 @@ def insert_mdn_link(jsondata):
     else:
       print("Checking URL "+url)
       try:
-        connection = urllib2.urlopen(url)
-        code = connection.getcode()
+        connection =  http.request('GET', url)
+        code = connection.status
         connection.close()
-      except urllib2.HTTPError, e:
-        code = e.getcode()
+      except urllib3.HTTPError(e):
+        code = e.status
       if code==200: valid_mdn_urls['valid'].append(url)
       else: valid_mdn_urls['invalid'].append(url)
     if code==200:
@@ -205,11 +207,18 @@ for jsondata in jsondatas:
   if not duplicate: unduplicatedjsondatas.append(jsondata)
 jsondatas = unduplicatedjsondatas
 
+title = ""
+if common.board:
+  title = common.board.info["name"]+" Software Reference"
+else:
+  title = "Espruino Software Reference"
+
 html("<html>")
 html(" <head>")
-html("  <title>Espruino Reference</title>")
+html("  <title>"+title+"</title>")
 html("  <style>")
 html("   body { font: 71%/1.5em  Verdana, 'Trebuchet MS', Arial, Sans-serif; color: #666666; }")
+html("   table { font: inherit; }")
 html("   h1, h2, h3, h4 { color: #000000; margin-left: 0px; }")
 html("   h4 { padding-left: 20px; }")
 html("   ul { list-style-position: inside; }")
@@ -259,7 +268,7 @@ html("    }")
 html("  }</script>")
 html(" </head>")
 html(" <body>")
-html("  <h1>Espruino Software Reference</h1>")
+html("  <h1>"+title+"</h1>")
 html("  <p style=\"text-align:right;\">Version "+common.get_version()+"</p>")
 
 if htmldev == True:
@@ -331,7 +340,7 @@ for jsondata in detail:
       text = ""
       for j in instances:
         text = text + " * [`"+j["name"]+"`](#l__global_"+j["name"]+")";
-        if "description" in j:           
+        if "description" in j:
           text = text + " " + j["description"].split("\n")[0]
         text = text + "\n"
       html_description(text, "")
@@ -345,7 +354,7 @@ for jsondata in detail:
     html("  </ul>")
 
   # Otherwise just output detail
-  link = get_link(jsondata)  
+  link = get_link(jsondata)
   html("  <h3 class=\"detail\"><a class=\"blush\" name=\""+link+"\" href=\"#t_"+link+"\" onclick=\"place('t_"+link+"','"+linkName+"');\">"+get_fullname(jsondata)+"</a>")
   #html("<!-- "+json.dumps(jsondata, sort_keys=True, indent=2)+"-->");
   if "githublink" in jsondata:
@@ -377,7 +386,7 @@ for jsondata in detail:
     html("  <h4>Description</h4>")
     desc = jsondata["description"]
     if not isinstance(desc, list): desc = [ desc ]
-    if "ifdef" in jsondata: 
+    if "ifdef" in jsondata:
       desc.append("\n\n**Note:** This is only available in "+common.get_ifdef_description(jsondata["ifdef"]));
     if "ifndef" in jsondata:
       desc.append("\n\n**Note:** This is not available in "+common.get_ifdef_description(jsondata["ifndef"]));

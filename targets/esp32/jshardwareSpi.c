@@ -22,6 +22,15 @@
 
 #define UNUSED(x) (void)(x)
 
+#if ESP_IDF_VERSION_MAJOR>=5 || CONFIG_IDF_TARGET_ESP32C3
+  #define SPICHANNEL0_HOST SPI2_HOST
+  #define SPICHANNEL1_HOST SPI3_HOST
+#else
+  #define SPICHANNEL0_HOST HSPI_HOST
+  #define SPICHANNEL1_HOST VSPI_HOST
+#endif
+
+
 int getSPIChannelPnt(IOEventFlags device){
   return device - EV_SPI1;
 }
@@ -30,10 +39,12 @@ void SPIChannelsInit(){
   for(i = 0; i < SPIMax; i++){
     SPIChannels[i].spi = NULL;
     SPIChannels[i].spi_read = false;
-	SPIChannels[i].g_lastSPIRead = (uint32_t)-1;
+    SPIChannels[i].g_lastSPIRead = (uint32_t)-1;
   }
-  SPIChannels[0].HOST = HSPI_HOST;
-  SPIChannels[1].HOST = VSPI_HOST;
+  SPIChannels[0].HOST = SPICHANNEL0_HOST;
+#if SPIMax>1
+  SPIChannels[1].HOST = SPICHANNEL1_HOST;
+#endif
 }
 void SPIChannelReset(int channelPnt){
   spi_bus_remove_device(SPIChannels[channelPnt].spi);
@@ -45,7 +56,7 @@ void SPIChannelReset(int channelPnt){
 void SPIReset(){
   int i;
   for(i = 0; i < SPIMax; i++){
-	if(SPIChannels[i].spi != NULL) SPIChannelReset(i);
+    if(SPIChannels[i].spi != NULL) SPIChannelReset(i);
   }
 }
 void jshSetDeviceInitialised(IOEventFlags device, bool isInit);
@@ -80,8 +91,8 @@ implement inf->spiMSB
 Test with ILI9341 works, but could be faster.
 Espruino supports sendig byte by byte, no mass sending is supported.
 */
-  
-  
+
+
 volatile spi_transaction_t spi_trans;
 volatile bool spi_Sending = false;
 
@@ -99,7 +110,7 @@ void jshSPISetup(
   int channelPnt = getSPIChannelPnt(device);
   int dma_chan = 0;
   Pin sck, miso, mosi;
-  if(SPIChannels[channelPnt].HOST == HSPI_HOST){
+  if(SPIChannels[channelPnt].HOST == SPICHANNEL0_HOST){
     dma_chan = 1;
     sck = inf->pinSCK != PIN_UNDEFINED ? inf->pinSCK : 14;
     miso = inf->pinMISO != PIN_UNDEFINED ? inf->pinMISO : 12;
@@ -121,17 +132,17 @@ void jshSPISetup(
     };
   // SPI_DEVICE_BIT_LSBFIRST  - test inf->spiMSB need to look at what values...
   uint32_t flags = 0;
-  
+
   spi_device_interface_config_t devcfg={
         .clock_speed_hz=inf->baudRate,
         .mode=inf->spiMode,
         .spics_io_num= -1,               //set CS not used by driver
         .queue_size=7,      //We want to be able to queue 7 transactions at a time
-		.flags=flags
+    .flags=flags
     };
   if(SPIChannels[channelPnt].spi){
-	SPIChannelReset(channelPnt);
-	jsWarn("spi was already in use, removed old assignment");
+  SPIChannelReset(channelPnt);
+  jsWarn("spi was already in use, removed old assignment");
   }
   esp_err_t ret=spi_bus_initialize(SPIChannels[channelPnt].HOST, &buscfg, dma_chan);
   assert(ret==ESP_OK);
@@ -154,7 +165,7 @@ int jshSPISend(
     esp_err_t ret;
     spi_transaction_t t;
     memset(&t, 0, sizeof(t));
-    t.length=8;                     
+    t.length=8;
     t.tx_buffer=&data;
     t.flags=SPI_TRANS_USE_RXDATA;
     ret=spi_device_transmit(SPIChannels[channelPnt].spi, &t);
@@ -178,23 +189,23 @@ bool jshSPISendMany(IOEventFlags device, unsigned char *tx, unsigned char *rx, s
       if(callback)callback();
       return true;
     }
-	jshSPIWait(device);
+  jshSPIWait(device);
     int channelPnt = getSPIChannelPnt(device);
-	esp_err_t ret;
+  esp_err_t ret;
     memset(&spi_trans, 0, sizeof(spi_trans));
     spi_trans.length=count*8;
     spi_trans.tx_buffer=tx;
     spi_trans.rx_buffer=rx;
-	spi_Sending = true;
+  spi_Sending = true;
     ret=spi_device_queue_trans(SPIChannels[channelPnt].spi, &spi_trans, rx?0:portMAX_DELAY);
-    
-	if (ret != ESP_OK) {
-	  spi_Sending = false;
-      jsExceptionHere(JSET_INTERNALERROR, "SPI Send Error %d\n", ret);
+
+  if (ret != ESP_OK) {
+    spi_Sending = false;
+      jsExceptionHere(JSET_INTERNALERROR, "SPI Send Error %d", ret);
       return false;
     }
-	jshSPIWait(device);
-	if(callback)callback();
+  jshSPIWait(device);
+  if(callback)callback();
   return true;
 }
 
@@ -233,7 +244,7 @@ void jshSPIWait(IOEventFlags device) {
   esp_err_t ret;
   ret=spi_device_get_trans_result(SPIChannels[channelPnt].spi, &spi_trans, portMAX_DELAY);
   if (ret != ESP_OK) {
-    jsExceptionHere(JSET_INTERNALERROR, "SPI Send Error %d\n", ret);
+    jsExceptionHere(JSET_INTERNALERROR, "SPI Send Error %d", ret);
   }
   spi_Sending = false;
   }
@@ -242,5 +253,5 @@ void jshSPIWait(IOEventFlags device) {
 /** Set whether to use the receive interrupt or not */
 void jshSPISetReceive(IOEventFlags device, bool isReceive) {
   int channelPnt = getSPIChannelPnt(device);
-  SPIChannels[channelPnt].spi_read = isReceive;  
+  SPIChannels[channelPnt].spi_read = isReceive;
 }
