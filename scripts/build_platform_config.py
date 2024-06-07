@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # This file is part of Espruino, a JavaScript interpreter for Microcontrollers
 #
@@ -35,11 +35,13 @@ import pinutils;
 # Now scan AF file
 print("Script location "+scriptdir)
 
-if len(sys.argv)!=3:
-  print("ERROR, USAGE: build_platform_config.py BOARD_NAME HEADERFILENAME")
+if len(sys.argv)<3 :
+  print("ERROR, USAGE: build_platform_config.py BOARD_NAME HEADERFILENAME [-Ddefine=1 ...]")
   exit(1)
 boardname = sys.argv[1]
 headerFilename = sys.argv[2]
+defines = sys.argv[3:]
+  
 print("HEADER_FILENAME "+headerFilename)
 print("BOARD "+boardname)
 # import the board def
@@ -79,16 +81,16 @@ flash_page_size = 1024
 
 if LINUX:
   flash_saved_code_pages = board.chip['flash']*1024 / flash_page_size
-  total_flash = flash_page_size*flash_saved_code_pages  
+  total_flash = flash_page_size*flash_saved_code_pages
 else: # NOT LINUX
   # 100xB and 103xB are mid-density, so have 1k page sizes
   if board.chip["part"][:7]=="STM32F1" and board.chip["part"][10]=="B": board.chip["subfamily"]="MD";
 
-  if board.chip["family"]=="STM32F1": 
+  if board.chip["family"]=="STM32F1":
     flash_page_size = 1024 if "subfamily" in board.chip and board.chip["subfamily"]=="MD" else 2048
   if board.chip["family"]=="STM32F2":
     flash_page_size = 128*1024
-  if board.chip["family"]=="STM32F3": 
+  if board.chip["family"]=="STM32F3":
     flash_page_size = 2*1024
   if board.chip["family"]=="STM32F4":
     flash_page_size = 128*1024
@@ -186,7 +188,7 @@ codeOut("")
 linker_end_var = "_end";     # End of RAM (eg top of stack)
 linker_etext_var = "_etext"; # End of text (function) section
 # External interrupt count
-exti_count = 16 
+exti_count = 16
 
 
 if board.chip["family"]=="LINUX":
@@ -237,12 +239,14 @@ elif board.chip["family"]=="AVR":
   board.chip["class"]="AVR"
 elif board.chip["family"]=="ESP8266":
   board.chip["class"]="ESP8266"
-elif board.chip["family"]=="ESP32":
+elif board.chip["family"]=="ESP32" or board.chip["family"]=="ESP32_IDF4":
   board.chip["class"]="ESP32"
   exti_count = 40
 elif board.chip["family"]=="SAMD":
   board.chip["class"]="SAMD"
   codeOut('#include "targetlibs/samd/include/due_sam3x.init.h"')
+elif board.chip["family"]=="EMBED":
+  board.chip["class"]="EMBED"
 else:
   die('Unknown chip family '+board.chip["family"])
 
@@ -281,11 +285,13 @@ if variables==0:
   codeOut('#define RESIZABLE_JSVARS // Allocate variables in blocks using malloc - slow, and linux-only')
 else:
   codeOut("#define JSVAR_CACHE_SIZE                "+str(variables)+" // Number of JavaScript variables in RAM")
+  if LINUX:
+    codeOut("#define JSVAR_MALLOC 1")
 
-if LINUX:  
+if LINUX:
   codeOut("#define FLASH_START                     "+hex(0x10000000))
   codeOut("#define FLASH_PAGE_SIZE                 "+str(flash_page_size))
-else:  
+else:
   codeOut("#define FLASH_AVAILABLE_FOR_CODE        "+str(int(flash_available_for_code)))
   if board.chip["class"]=="EFM32":
     codeOut("// FLASH_PAGE_SIZE defined in em_device.h");
@@ -314,13 +320,13 @@ if flash_saved_code2_pages:
 codeOut("");
 
 codeOut("#define CLOCK_SPEED_MHZ                      "+str(board.chip["speed"]))
-codeOut("#define USART_COUNT                          "+str(board.chip["usart"]))
+codeOut("#define ESPR_USART_COUNT                     "+str(board.chip["usart"]))
 if "spi" in board.chip:
-  codeOut("#define SPI_COUNT                            "+str(board.chip["spi"]))
-codeOut("#define I2C_COUNT                            "+str(board.chip["i2c"]))
-codeOut("#define ADC_COUNT                            "+str(board.chip["adc"]))
-codeOut("#define DAC_COUNT                            "+str(board.chip["dac"]))
-codeOut("#define EXTI_COUNT                           "+str(exti_count))
+  codeOut("#define ESPR_SPI_COUNT                       "+str(board.chip["spi"]))
+codeOut("#define ESPR_I2C_COUNT                       "+str(board.chip["i2c"]))
+codeOut("#define ESPR_ADC_COUNT                       "+str(board.chip["adc"]))
+codeOut("#define ESPR_DAC_COUNT                       "+str(board.chip["dac"]))
+codeOut("#define ESPR_EXTI_COUNT                      "+str(exti_count))
 codeOut("");
 codeOut("#define DEFAULT_CONSOLE_DEVICE              "+board.info["default_console"]);
 if "default_console_tx" in board.info:
@@ -350,14 +356,14 @@ else:
   if board.chip["ram"]>=20: bufferSizeIO = 128
   if board.chip["ram"]>=96: bufferSizeIO = 256
   # NRF52 needs this as Bluetooth traffic is funnelled through the buffer
-  if board.chip["family"]=="NRF52": 
+  if board.chip["family"]=="NRF52":
     bufferSizeIO = 256
     # we often use increased MTUs and even with a big buffer these mean we need to leave
     # a lot of space when we send XOFF (due to delay in response from sender)
-    xoff_thresh = 3 
+    xoff_thresh = 3
     xon_thresh = 2
   # TX buffer - for print/write/etc
-  bufferSizeTX = 32 
+  bufferSizeTX = 32
   if board.chip["ram"]>=20: bufferSizeTX = 128
   if board.chip["ram"]>=128: bufferSizeTX = 256
   bufferSizeTimer = 4 if board.chip["ram"]<20 else 16
@@ -365,7 +371,10 @@ else:
 if 'util_timer_tasks' in board.info:
   bufferSizeTimer = board.info['util_timer_tasks']
 
-codeOut("#define IOBUFFERMASK "+str(bufferSizeIO-1)+" // (max 255) amount of items in event buffer - events take 5 bytes each")
+if 'io_buffer_size' in board.info:
+  bufferSizeIO = board.info['io_buffer_size']
+
+codeOut("#define IOBUFFERMASK "+str(bufferSizeIO-1)+" // (max 65535) amount of items in event buffer - events take 5 bytes each")
 codeOut("#define TXBUFFERMASK "+str(bufferSizeTX-1)+" // (max 255) amount of items in the transmit buffer - 2 bytes each")
 codeOut("#define UTILTIMERTASK_TASKS ("+str(bufferSizeTimer)+") // Must be power of 2 - and max 256")
 
@@ -508,6 +517,19 @@ if "TOUCH" in board.devices:
   codeOut("#define TOUCH_ADDR "+str(board.devices["TOUCH"]["addr"]))
   codeOutDevicePins("TOUCH", "TOUCH")
 
+if "QWIIC0" in board.devices:
+  codeOutDevicePins("QWIIC0", "QWIIC0")
+if "QWIIC1" in board.devices:
+  codeOutDevicePins("QWIIC1", "QWIIC1")
+if "QWIIC2" in board.devices:
+  codeOutDevicePins("QWIIC2", "QWIIC2")
+if "QWIIC3" in board.devices:
+  codeOutDevicePins("QWIIC3", "QWIIC3")
+if "DRIVER0" in board.devices:
+  codeOutDevicePins("DRIVER0", "DRIVER0")
+if "DRIVER1" in board.devices:
+  codeOutDevicePins("DRIVER1", "DRIVER1")  
+
 if "SPIFLASH" in board.devices:
   codeOut("#define SPIFLASH_PAGESIZE 4096")
   codeOut("#define SPIFLASH_LENGTH "+str(board.devices["SPIFLASH"]["size"]))
@@ -546,6 +568,26 @@ codeOut("#define IS_PIN_A_LED(PIN) (("+")||(".join(ledChecks)+"))")
 codeOut("#ifndef IS_PIN_A_BUTTON")
 codeOut("#define IS_PIN_A_BUTTON(PIN) (("+")||(".join(btnChecks)+"))")
 codeOut("#endif")
+
+# add makefile defines
+if len(defines) > 0:
+  codeOut("\n#ifndef ESPR_DEFINES_ON_COMMANDLINE")
+  codeOut("// The Makefile calls the compiler with ESPR_DEFINES_ON_COMMANDLINE defined so this")
+  codeOut("// is ignored and all these defines go on the command line and apply to every file")
+  codeOut("// whether or not platform_config was included. However if you're viewing a file in")
+  codeOut("// a code editor like VS Code it'll parse this and should then highlight the correct")
+  codeOut("// code based on your build")              
+  for define in defines:
+    if not define.startswith("-D"):
+      continue
+    define = define[2:]
+    if "=" in define:
+      defSplit = define.split("=")
+      codeOut("\t#define " + defSplit[0] + " " + defSplit[1])
+    else:
+      codeOut("\t#define " + define)
+  codeOut("#endif")
+# end makefile defines
 
 codeOut("""
 #endif // _PLATFORM_CONFIG_H

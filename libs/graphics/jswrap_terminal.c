@@ -28,9 +28,8 @@
 }
 A simple VT100 terminal emulator.
 
-When data is sent to the `Terminal` object, `Graphics.getInstance()`
-is called and if an instance of `Graphics` is found then characters
-are written to it.
+When data is sent to the `Terminal` object, `Graphics.getInstance()` is called
+and if an instance of `Graphics` is found then characters are written to it.
 */
 
 #ifdef USE_FONT_6X8
@@ -220,12 +219,12 @@ bool jswrap_terminal_idle() {
 #else
     JsGraphics gfx;
     if (terminalGetGFX(&gfx)) {
-      JsVar *flip = jsvObjectGetChild(gfx.graphicsVar, "flip", 0);
+      JsVar *flip = jsvObjectGetChildIfExists(gfx.graphicsVar, "flip");
       if (flip) jsvUnLock2(jspExecuteFunction(flip,gfx.graphicsVar,0,0),flip);
       jsvUnLock(gfx.graphicsVar);
-      terminalNeedsFlip = false;
     }
 #endif
+    terminalNeedsFlip = false;
   }
   return false;
 }

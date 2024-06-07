@@ -33,12 +33,14 @@
 #include "lcd_arraybuffer.h"
 
 const Pin PIXL_IO_PINS[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
+bool lcdIsOn;
 
 /*JSON{
     "type": "class",
     "class" : "Pixl"
 }
-Class containing utility functions for [Pixl.js](http://www.espruino.com/Pixl.js)
+Class containing utility functions for
+[Pixl.js](http://www.espruino.com/Pixl.js)
 */
 
 /*JSON{
@@ -48,10 +50,10 @@ Class containing utility functions for [Pixl.js](http://www.espruino.com/Pixl.js
     "generate" : "jswrap_espruino_getBattery",
     "return" : ["int", "A percentage between 0 and 100" ]
 }
-DEPRECATED - Please use `E.getBattery()` instead.
+**DEPRECATED** - Please use `E.getBattery()` instead.
 
-Return an approximate battery percentage remaining based on
-a normal CR2032 battery (2.8 - 2.2v)
+Return an approximate battery percentage remaining based on a normal CR2032
+battery (2.8 - 2.2v)
 */
 JsVarInt jswrap_pixljs_getBattery() {
   JsVarFloat v = jshReadVRef();
@@ -71,7 +73,8 @@ JsVarInt jswrap_pixljs_getBattery() {
   "ifdef" : "PIXLJS",
   "return" : ["pin",""]
 }
-The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A4.
+The pin marked SDA on the Arduino pin footprint. This is connected directly to
+pin A4.
 */
 /*JSON{
   "type" : "variable",
@@ -80,7 +83,8 @@ The pin marked SDA on the Arduino pin footprint. This is connected directly to p
   "ifdef" : "PIXLJS",
   "return" : ["pin",""]
 }
-The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A5.
+The pin marked SDA on the Arduino pin footprint. This is connected directly to
+pin A5.
 */
 
 
@@ -97,7 +101,7 @@ void lcd_wr(int data) {
 void lcd_flip_gfx(JsGraphics *gfx) {
   if (gfx->data.modMinX > gfx->data.modMaxX) return; // nothing to do!
 
-  JsVar *buf = jsvObjectGetChild(gfx->graphicsVar,"buffer",0);
+  JsVar *buf = jsvObjectGetChildIfExists(gfx->graphicsVar,"buffer");
   if (!buf) return;
   JSV_GET_AS_CHAR_ARRAY(bPtr, bLen, buf);
   if (!bPtr || bLen<128*8) return;
@@ -145,7 +149,7 @@ void lcd_flip_gfx(JsGraphics *gfx) {
 
 /// Send buffer contents to the screen. Usually only the modified data will be output, but if all=true then the whole screen contents is sent
 void lcd_flip(JsVar *parent, bool all) {
-  JsGraphics gfx; 
+  JsGraphics gfx;
   if (!graphicsGetFromVar(&gfx, parent)) return;
   if (all) {
     gfx.data.modMinX = 0;
@@ -323,13 +327,13 @@ static bool pixl_selfTest() {
     jsiConsolePrintf("Have events - no BLE test\n");
   } else {
     uint32_t err_code;
-    err_code = jsble_set_scanning(true, false);
+    err_code = jsble_set_scanning(true, NULL);
     jsble_check_error(err_code);
     int timeout = 20;
     while (timeout-- && !jshHasEvents()) {
       nrf_delay_ms(100);
     }
-    err_code = jsble_set_scanning(false, false);
+    err_code = jsble_set_scanning(false, NULL);
     jsble_check_error(err_code);
     if (!jshHasEvents()) {
       jsiConsolePrintf("No BLE adverts found in 2s\n");
@@ -346,6 +350,7 @@ static bool pixl_selfTest() {
 }*/
 void jswrap_pixljs_init() {
   // LCD Init 1
+  lcdIsOn = true;
   jshPinOutput(LCD_SPI_CS,0);
   jshPinOutput(LCD_SPI_DC,0);
   jshPinOutput(LCD_SPI_SCK,0);
@@ -414,7 +419,10 @@ void jswrap_pixljs_init() {
    * With bootloader this means apply power while holding button for >3 secs */
   static bool firstStart = true;
 
-  JsVar *splashScreen = jsfReadFile(jsfNameFromString(".splash"),0,0);
+  JsVar *splashScreen = 0;
+  if (!((jshPinGetValue(BTN1_PININDEX) == BTN1_ONSTATE) &&
+        (jshPinGetValue(BTN4_PININDEX) == BTN4_ONSTATE)))
+    splashScreen = jsfReadFile(jsfNameFromString(".splash"),0,0);
   if (jsvIsString(splashScreen)) {
     if (jsvGetStringLength(splashScreen)) {
       graphicsSetVar(&gfx);
@@ -488,13 +496,82 @@ bool jswrap_pixljs_idle() {
     "params" : [
       ["menu","JsVar","An object containing name->function mappings to to be used in a menu"]
     ],
-    "return" : ["JsVar", "A menu object with `draw`, `move` and `select` functions" ]
+    "return" : ["JsVar", "A menu object with `draw`, `move` and `select` functions" ],
+    "typescript" : "menu(menu: Menu): MenuInstance;"
 }
-Display a menu on Pixl.js's screen, and set up the buttons to navigate through it.
+Display a menu on Pixl.js's screen, and set up the buttons to navigate through
+it.
 
 DEPRECATED: Use `E.showMenu`
 */
 
+/*TYPESCRIPT
+/**
+ * Menu item that holds a boolean value.
+ *\/
+type MenuBooleanItem = {
+  value: boolean;
+  format?: (value: boolean) => string;
+  onchange?: (value: boolean) => void;
+};
+
+/**
+ * Menu item that holds a numerical value.
+ *\/
+type MenuNumberItem = {
+  value: number;
+  format?: (value: number) => string;
+  onchange?: (value: number) => void;
+  step?: number;
+  min?: number;
+  max?: number;
+  wrap?: boolean;
+};
+
+/**
+ * Options passed to a menu.
+ *\/
+type MenuOptions = {
+  title?: string;
+  back?: () => void;
+  selected?: number;
+  fontHeight?: number;
+  scroll?: number;
+  x?: number;
+  y?: number;
+  x2?: number;
+  y2?: number;
+  cB?: number;
+  cF?: number;
+  cHB?: number;
+  cHF?: number;
+  predraw?: (g: Graphics) => void;
+  preflip?: (g: Graphics, less: boolean, more: boolean) => void;
+};
+
+/**
+ * Object containing data about a menu to pass to `E.showMenu`.
+ *\/
+type Menu = {
+  ""?: MenuOptions;
+  [key: string]:
+    | MenuOptions
+    | (() => void)
+    | MenuBooleanItem
+    | MenuNumberItem
+    | { value: string; onchange?: () => void }
+    | undefined;
+};
+
+/**
+ * Menu instance.
+ *\/
+type MenuInstance = {
+  draw: () => void;
+  move: (n: number) => void;
+  select: () => void;
+};
+*/
 
 /*JSON{
     "type" : "staticmethod",
@@ -504,12 +581,16 @@ DEPRECATED: Use `E.showMenu`
     "params" : [
       ["menu","JsVar","An object containing name->function mappings to to be used in a menu"]
     ],
-    "return" : ["JsVar", "A menu object with `draw`, `move` and `select` functions" ]
+    "return" : ["JsVar", "A menu object with `draw`, `move` and `select` functions" ],
+    "typescript": [
+      "showMenu(menu: Menu): MenuInstance;",
+      "showMenu(): void;"
+    ]
 }
 Display a menu on the screen, and set up the buttons to navigate through it.
 
-Supply an object containing menu items. When an item is selected, the
-function it references will be executed. For example:
+Supply an object containing menu items. When an item is selected, the function
+it references will be executed. For example:
 
 ```
 var boolean = false;
@@ -528,6 +609,7 @@ var mainmenu = {
   "A Number" : {
     value : number,
     min:0,max:100,step:10,
+    // noList : true, // On Bangle.js devices this forces use of the number-chooser (and not a scrolling list)
     onchange : v => { number=v; }
   },
   "Exit" : function() { E.showMenu(); }, // remove the menu
@@ -543,8 +625,8 @@ var submenu = {
 E.showMenu(mainmenu);
 ```
 
-The menu will stay onscreen and active until explicitly removed,
-which you can do by calling `E.showMenu()` without arguments.
+The menu will stay onscreen and active until explicitly removed, which you can
+do by calling `E.showMenu()` without arguments.
 
 See http://www.espruino.com/graphical_menu for more detailed information.
 */
@@ -556,9 +638,10 @@ See http://www.espruino.com/graphical_menu for more detailed information.
     "generate_js" : "libs/js/pixljs/E_showMessage.min.js",
     "params" : [
       ["message","JsVar","A message to display. Can include newlines"],
-      ["title","JsVar","(optional) a title for the message"]
+      ["title","JsVar","[optional] a title for the message"]
     ],
-    "ifdef" : "PIXLJS"
+    "ifdef" : "PIXLJS",
+    "typescript" : "showMessage(message: string, title?: string): void;"
 }
 
 A utility function for displaying a full screen message on the screen.
@@ -577,18 +660,21 @@ E.showMessage("These are\nLots of\nLines","My Title")
     "generate_js" : "libs/js/pixljs/E_showPrompt.min.js",
     "params" : [
       ["message","JsVar","A message to display. Can include newlines"],
-      ["options","JsVar","(optional) an object of options (see below)"]
+      ["options","JsVar","[optional] an object of options (see below)"]
     ],
     "return" : ["JsVar","A promise that is resolved when 'Ok' is pressed"],
-    "ifdef" : "PIXLJS"
+    "ifdef" : "PIXLJS",
+    "typescript" : [
+      "showPrompt<T = boolean>(message: string, options?: { title?: string, buttons?: { [key: string]: T } }): Promise<T>;",
+      "showPrompt(): void;"
+    ]
 }
 
-Displays a full screen prompt on the screen, with the buttons
-requested (or `Yes` and `No` for defaults).
+Displays a full screen prompt on the screen, with the buttons requested (or
+`Yes` and `No` for defaults).
 
-When the button is pressed the promise is resolved with the
-requested values (for the `Yes` and `No` defaults, `true` and `false`
-are returned).
+When the button is pressed the promise is resolved with the requested values
+(for the `Yes` and `No` defaults, `true` and `false` are returned).
 
 ```
 E.showPrompt("Do you like fish?").then(function(v) {
@@ -623,10 +709,11 @@ The second `options` argument can contain:
     "generate_js" : "libs/js/pixljs/E_showAlert.min.js",
     "params" : [
       ["message","JsVar","A message to display. Can include newlines"],
-      ["options","JsVar","(optional) a title for the message"]
+      ["options","JsVar","[optional] a title for the message"]
     ],
     "return" : ["JsVar","A promise that is resolved when 'Ok' is pressed"],
-    "ifdef" : "PIXLJS"
+    "ifdef" : "PIXLJS",
+    "typescript" : "showAlert(message?: string, options?: string): Promise<void>;"
 }
 
 Displays a full screen prompt on the screen, with a single 'Ok' button.
@@ -645,3 +732,11 @@ E.showAlert("These are\nLots of\nLines","My Title").then(function() {
 
 To remove the window, call `E.showAlert()` with no arguments.
 */
+
+/*JSON{
+  "type" : "powerusage",
+  "generate" : "jswrap_pixljs_powerusage"
+}*/
+void jswrap_pixljs_powerusage(JsVar *devices) {
+  jsvObjectSetChildAndUnLock(devices, "LCD", jsvNewFromInteger(lcdIsOn ? 170 : 20));
+}

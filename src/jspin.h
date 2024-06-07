@@ -12,8 +12,8 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef JSPIN_H
-#define JSPIN_H
+#ifndef JSPIN_H_
+#define JSPIN_H_
 
 typedef unsigned char Pin; ///< for specifying pins for hardware
 #define PIN_UNDEFINED ((Pin)0xFF)
@@ -61,7 +61,7 @@ typedef enum {
 typedef enum {
   JSH_ANALOG_NONE = 0,
   JSH_ANALOG1     = 32,
-#if ADC_COUNT>1
+#if ESPR_ADC_COUNT>1
   JSH_ANALOG2     = 64,
   JSH_ANALOG3     = 128,
   JSH_ANALOG4     = 256,
@@ -90,7 +90,7 @@ typedef enum {
   JSH_ANALOG_CH17,
 
   JSH_MASK_ANALOG_CH  = 31,
-#if ADC_COUNT>1
+#if ESPR_ADC_COUNT>1
   JSH_MASK_ANALOG_ADC = JSH_ANALOG1|JSH_ANALOG2|JSH_ANALOG3|JSH_ANALOG4,
 #else
   JSH_MASK_ANALOG_ADC = JSH_ANALOG1,
@@ -213,7 +213,6 @@ void jshGetPinString(char *result, Pin pin);
 Pin jshGetPinFromVar(JsVar *pinv);
 Pin jshGetPinFromVarAndUnLock(JsVar *pinv);
 
-
 /// Is the pin state manual (has the user asked us explicitly to change it?)
 bool jshGetPinStateIsManual(Pin pin);
 /// Set whether the pin state is manual (has the user asked us explicitly to change it?)
@@ -266,4 +265,4 @@ JshPinFunction jshGetDeviceFor(JshPinFunction deviceMin, JshPinFunction deviceMa
 /** Like jshGetDeviceFor, but returns an actual Object (eg. SPI) if one can be found. */
 JsVar *jshGetDeviceObjectFor(JshPinFunction deviceMin, JshPinFunction deviceMax, Pin pin);
 
-#endif //JSPIN_H
+#endif //JSPIN_H_

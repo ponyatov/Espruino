@@ -28,6 +28,10 @@ info = {
      #'GRAPHICS',
      'CRYPTO',
      'NEOPIXEL',
+   ],
+   'makefile' : [
+     'DEFINES+=-DSAVE_ON_FLASH_MATH', 
+     'USE_DEBUGGER=0', # We can't use debugger as RTOS needs jsiIdle to keep exiting     
    ]
  }
 };

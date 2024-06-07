@@ -69,9 +69,9 @@ static uint8_t      tnSrvMode;    ///< current mode for the telnet server
   "type"  : "library",
   "class" : "TelnetServer"
 }
-This library implements a telnet console for the Espruino interpreter. It requires a network
-connection, e.g. Wifi, and **currently only functions on the ESP8266 and on Linux **. It uses
-port 23 on the ESP8266 and port 2323 on Linux.
+This library implements a telnet console for the Espruino interpreter. It
+requires a network connection, e.g. Wifi, and **currently only functions on the
+ESP8266 and on Linux **. It uses port 23 on the ESP8266 and port 2323 on Linux.
 
 **Note:** To enable on Linux, run `./espruino --telnet`
 */
@@ -89,12 +89,12 @@ port 23 on the ESP8266 and port 2323 on Linux.
 void jswrap_telnet_setOptions(JsVar *jsOptions) {
   // Make sure jsOptions is an object
   if (!jsvIsObject(jsOptions)) {
-    jsExceptionHere(JSET_ERROR, "Expecting options object but got %t", jsOptions);
+    jsExceptionHere(JSET_ERROR, "Expecting Object, got %t", jsOptions);
     return;
   }
 
   // Get mode
-  JsVar *jsMode = jsvObjectGetChild(jsOptions, "mode", 0);
+  JsVar *jsMode = jsvObjectGetChildIfExists(jsOptions, "mode");
   if (jsvIsString(jsMode)) {
     if (jsvIsStringEqual(jsMode, "on")) {
       tnSrvMode = MODE_ON;

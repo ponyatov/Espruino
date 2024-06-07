@@ -19,22 +19,22 @@
 #include "jsparse.h"
 
 #ifdef USE_AES
-#include "mbedtls/include/mbedtls/aes.h"
+#include "mbedtls/aes.h"
 #endif
 #ifndef USE_SHA1_JS
-#include "mbedtls/include/mbedtls/sha1.h"
+#include "mbedtls/sha1.h"
 #endif
 #ifdef USE_SHA256
-#include "mbedtls/include/mbedtls/sha256.h"
+#include "mbedtls/sha256.h"
 #endif
 #ifdef USE_SHA512
-#include "mbedtls/include/mbedtls/sha512.h"
+#include "mbedtls/sha512.h"
 #endif
-#include "mbedtls/include/mbedtls/pkcs5.h"
+#include "mbedtls/pkcs5.h"
 #ifdef USE_TLS
-#include "mbedtls/include/mbedtls/pk.h"
-#include "mbedtls/include/mbedtls/x509.h"
-#include "mbedtls/include/mbedtls/ssl.h"
+#include "mbedtls/pk.h"
+#include "mbedtls/x509.h"
+#include "mbedtls/ssl.h"
 #endif
 
 
@@ -45,7 +45,9 @@
 }
 Cryptographic functions
 
-**Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
+**Note:** This library is currently only included in builds for boards where
+there is space. For other boards there is `crypto.js` which implements SHA1 in
+JS.
 */
 
 
@@ -57,7 +59,9 @@ Cryptographic functions
 }
 Class containing AES encryption/decryption
 
-**Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
+**Note:** This library is currently only included in builds for boards where
+there is space. For other boards there is `crypto.js` which implements SHA1 in
+JS.
 */
 /*JSON{
   "type" : "staticproperty",
@@ -86,7 +90,7 @@ const char *jswrap_crypto_error_to_str(int err) {
     case MBEDTLS_ERR_MD_ALLOC_FAILED: return "Not enough memory";
     case MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE: return "Feature unavailable";
     case MBEDTLS_ERR_MD_BAD_INPUT_DATA: return "Bad input data";
-#ifdef USE_AES	
+#ifdef USE_AES
     case MBEDTLS_ERR_AES_INVALID_INPUT_LENGTH: return "Invalid input length";
 #endif
   }
@@ -190,9 +194,9 @@ JsVar *jswrap_crypto_SHAx(JsVar *message, int shaNum) {
 
 Performs a SHA1 hash and returns the result as a 20 byte ArrayBuffer.
 
-**Note:** On some boards (currently only Espruino Original) there
-isn't space for a fully unrolled SHA1 implementation so a slower
-all-JS implementation is used instead.
+**Note:** On some boards (currently only Espruino Original) there isn't space
+for a fully unrolled SHA1 implementation so a slower all-JS implementation is
+used instead.
 */
 /*JSON{
   "type" : "staticmethod",
@@ -280,12 +284,12 @@ JsVar *jswrap_crypto_PBKDF2(JsVar *passphrase, JsVar *salt, JsVar *options) {
 
 
   if (jsvIsObject(options)) {
-    keySize = jsvGetIntegerAndUnLock(jsvObjectGetChild(options, "keySize", 0));
+    keySize = jsvObjectGetIntegerChild(options, "keySize");
     if (keySize<=0) keySize=128/32;
-    iterations = jsvGetIntegerAndUnLock(jsvObjectGetChild(options, "iterations", 0));
+    iterations = jsvObjectGetIntegerChild(options, "iterations");
     if (iterations<1) iterations = 1;
 
-    JsVar *hashVar = jsvObjectGetChild(options, "hasher", 0);
+    JsVar *hashVar = jsvObjectGetChildIfExists(options, "hasher");
     if (!jsvIsUndefined(hashVar))
       hasher = jswrap_crypto_getHasher(hashVar);
     jsvUnLock(hashVar);
@@ -341,12 +345,12 @@ static NO_INLINE JsVar *jswrap_crypto_AEScrypt(JsVar *message, JsVar *key, JsVar
   CryptoMode mode = CM_CBC;
 
   if (jsvIsObject(options)) {
-    JsVar *ivVar = jsvObjectGetChild(options, "iv", 0);
+    JsVar *ivVar = jsvObjectGetChildIfExists(options, "iv");
     if (ivVar) {
       jsvIterateCallbackToBytes(ivVar, iv, sizeof(iv));
       jsvUnLock(ivVar);
     }
-    JsVar *modeVar = jsvObjectGetChild(options, "mode", 0);
+    JsVar *modeVar = jsvObjectGetChildIfExists(options, "mode");
     if (!jsvIsUndefined(modeVar))
       mode = jswrap_crypto_getMode(modeVar);
     jsvUnLock(modeVar);
@@ -451,7 +455,7 @@ static NO_INLINE JsVar *jswrap_crypto_AEScrypt(JsVar *message, JsVar *key, JsVar
   "params" : [
     ["passphrase","JsVar","Message to encrypt"],
     ["key","JsVar","Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS"],
-    ["options","JsVar","An optional object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`"]
+    ["options","JsVar","[optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`"]
   ],
   "return" : ["JsVar","Returns an ArrayBuffer"],
   "return_object" : "ArrayBuffer",
@@ -470,7 +474,7 @@ JsVar *jswrap_crypto_AES_encrypt(JsVar *message, JsVar *key, JsVar *options) {
   "params" : [
     ["passphrase","JsVar","Message to decrypt"],
     ["key","JsVar","Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS"],
-    ["options","JsVar","An optional object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`"]
+    ["options","JsVar","[optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`"]
   ],
   "return" : ["JsVar","Returns an ArrayBuffer"],
   "return_object" : "ArrayBuffer",
