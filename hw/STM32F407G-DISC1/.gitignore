@@ -1,6 +1,0 @@
-*.c
-*.h
-*.orig
-.mxproject
-LICENSE.txt
-!.gitignore
