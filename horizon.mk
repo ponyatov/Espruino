@@ -14,6 +14,20 @@ P += boards/$(HZ).py
 $(JSON): $(BOARD)
 	BOARD=$(HZ) DEBUG=1 make boardjson
 
+# doc
+.PHONY: doc
+doc:
+
+# install
+.PHONY: install update ref gz
+install: doc ref gz
+	$(MAKE) update
+update:
+	sudo apt update
+	sudo apt install -uy `cat apt.$(shell lsb_release -si)`
+ref: $(REF)
+gz:  $(GZ)
+
 # merge
 MERGE += horizon.mk Makefile README.md apt.Debian
 MERGE += Doxyfile .clang-format .gitignore
