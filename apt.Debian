@@ -1,0 +1,8 @@
+git make curl
+code meld doxygen clang-format
+cmake g++ gdb
+flex bison libreadline-dev ragel
+dos2unix
+gcc-arm-none-eabi gdb-multiarch openocd stlink-tools
+newlib-source
+dfu-util

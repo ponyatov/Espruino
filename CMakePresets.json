@@ -1,0 +1,47 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "common",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/tmp/${presetName}",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/bin/${presetName}",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": false
+            }
+        },
+        {
+            "name": "cortexM",
+            "hidden": true,
+            "inherits": "common",
+            "toolchainFile": "${sourceDir}/cmake/arm-none-eabi-gcc.cmake",
+            "cacheVariables": {
+                "WFLAGS":     "-Wall -Wextra -Wpedantic",
+                "FSECTIONS":  "-fdata-sections -ffunction-sections",
+                "GCSECTIONS": "-Wl,--gc-sections",
+                "CMAKE_VERBOSE_MAKEFILE": true
+            }
+        },
+        {
+            "name": "cortexM4",
+            "hidden": true,
+            "inherits": "cortexM",
+            "cacheVariables": {
+                "MCPU": "-mcpu=cortex-m4",
+                "MFPU": "-mfpu=fpv4-sp-d16 -mfloat-abi=hard",
+                "ARCH": "CortexM4"
+            }
+        },
+        {
+            "name": "IskraJS",
+            "inherits": "cortexM4",
+            "cacheVariables": {
+                 "HW": "IskraJS",
+                "CPU": "STM32F405RG",
+                "HAL": "STM32F4"
+            }
+        }
+    ]
+}
