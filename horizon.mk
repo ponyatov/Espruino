@@ -1,9 +1,14 @@
 # tiny scripts
 
-H = HORIZON
-JSON  = boards/$(H).json
-BOARD = boards/$(H).py
+HZ = HORIZON
+JSON  = boards/$(HZ).json
+BOARD = boards/$(HZ).py
+
+# patched source code:
+C += src/jsinteractive.c
+H += 
+S += targetlibs/stm32f4/lib/startup_stm32f40_41xxx.s
 
 .PHONY: $(JSON)
 $(JSON): $(BOARD)
-	BOARD=$(H) DEBUG=1 make boardjson
+	BOARD=$(HZ) DEBUG=1 make boardjson
