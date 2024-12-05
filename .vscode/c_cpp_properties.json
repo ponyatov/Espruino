@@ -1,0 +1,25 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "arm-none-eabi",
+            "includePath": [
+                "${workspaceFolder}/inc/**",
+                "${workspaceFolder}/tmp/**",
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/hw/STM32F407G-DISC1/Drivers/CMSIS/Include",
+                "${workspaceFolder}/hw/STM32F407G-DISC1/Drivers/CMSIS/Device/ST/STM32F4xx/Include"
+            ],
+            "forcedInclude": [
+                "${workspaceFolder}/hw/STM32F407G-DISC1/Drivers/CMSIS/Include/core_cm4.h"
+            ],
+            "defines": [
+                "STM32F407xx"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc"
+        }
+    ]
+}
