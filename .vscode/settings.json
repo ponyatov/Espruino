@@ -28,7 +28,7 @@
     },
     "files.associations": {
         "lib/*.ini": "flic", "lib/*.f": "flic",
-        "*.mk": "makefile", "hw.info": "makefile",
+        "*.mk": "makefile", "hw.info": "makefile", "*.make": "makefile",
         "*.ioc": "ini",
         "*.s": "arm", "*.S": "arm", "*.ld*": "linkerscript",
         ".gdbinit": "properties", "*.cfg": "properties",
