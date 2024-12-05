@@ -1,0 +1,129 @@
+#
+# Definitions for the build of the ESP8266
+
+ESP8266=1
+
+# Enable link-time optimisations (inlining across files), use -Os 'cause else we end up with
+# too large a firmware (-Os is -O2 without optimizations that increase code size)
+ifndef DISABLE_LTO
+OPTIMIZEFLAGS+=-Os -g -fno-fat-lto-objects -Wl,--allow-multiple-definition
+#OPTIMIZEFLAGS+=-DLINK_TIME_OPTIMISATION # this actually slows things down!
+else
+# DISABLE_LTO is necessary in order to analyze static string sizes (see: topstring makefile target)
+OPTIMIZEFLAGS+=-Os -Wl,--allow-multiple-definition
+endif
+CFLAGS_C_COMPILER= -std=gnu11 -fgnu89-inline
+
+ET_FM               ?= qio      # Valid values are keep, qio, qout, dio, dout
+
+ifdef FLASH_4MB
+ESP_COMBINED_SIZE   = 4096
+ESP_FLASH_MAX       ?= 831488   # max bin file: 940KB
+ESP_FLASH_SIZE      ?= 6        # 6->4MB (1024KB+1024KB)       
+ESP_FLASH_MODE      ?= 0        # 0->QIO, 2->DIO
+ESP_FLASH_FREQ_DIV  ?= 15       # 15->80Mhz
+ET_FS               ?= 4MB-c1   # 32Mbit (4MB) flash size in esptool flash command
+ET_FF               ?= 80m      # 80Mhz flash speed in esptool flash command
+ET_BLANK            ?= 0x3FE000 # where to flash blank.bin
+ET_DEFAULTS         ?= 0x3FC000 # where to flash esp_init_data_default.bin to default SDK settings
+CFLAGS              += -mforce-l32
+else ifdef 2MB
+ESP_FLASH_MAX       ?= 479232   # max bin file: 468KB
+ESP_FLASH_SIZE      ?= 3        # 3->2MB (512KB+512KB)
+ESP_FLASH_MODE      ?= 0        # 0->QIO, 2->DIO
+ESP_FLASH_FREQ_DIV  ?= 15       # 15->80Mhz
+ET_FS               ?= 16m      # 16Mbit (2MB) flash size in esptool flash command
+ET_FF               ?= 80m      # 80Mhz flash speed in esptool flash command
+ET_BLANK            ?= 0x1FE000 # where to flash blank.bin
+ET_DEFAULTS         ?= 0x1FC000 # where to flash esp_init_data_default.bin to default SDK settings
+else ifdef 1MB
+ESP_FLASH_MAX       ?= 479232   # max bin file: 468KB
+ESP_FLASH_SIZE      ?= 2        # 2->1MB (512KB+512KB)
+ESP_FLASH_MODE      ?= 0        # 0->QIO, 2->DIO
+ESP_FLASH_FREQ_DIV  ?= 15       # 15->80Mhz
+ET_FS               ?=  8m      # 8Mbit (1MB) flash size in esptool flash command
+ET_FF               ?= 80m      # 80Mhz flash speed in esptool flash command
+ET_BLANK            ?= 0xFE000  # where to flash blank.bin
+ET_DEFAULTS         ?= 0xFC000  # where to flash esp_init_data_default.bin to default SDK settings
+else # 512KB
+ESP_COMBINED_SIZE   = 512
+ESP_FLASH_MAX       ?= 479232   # max bin file: 468KB
+ESP_FLASH_SIZE      ?= 0        # 0->512KB
+ESP_FLASH_MODE      ?= 0        # 0->QIO
+ESP_FLASH_FREQ_DIV  ?= 0        # 0->40Mhz
+ET_FS               ?= 512KB    # 4Mbit (512KB) flash size in esptool flash command
+ET_FF               ?= 40m      # 40Mhz flash speed in esptool flash command
+ET_BLANK            ?= 0x7E000  # where to flash blank.bin
+ET_DEFAULTS         ?= 0x7C000  # where to flash esp_init_data_default.bin to default SDK settings
+endif
+
+
+ifdef FLASH_1MB
+ESP_COMBINED_SIZE   = 1024
+ESP_FLASH_MAX       = 831488    # max bin file: 812KB
+ESP_FLASH_SIZE      = 2         # 2->1MB (1024)
+ESP_FLASH_MODE      = 0         # 0->QIO, 2->DIO
+ESP_FLASH_FREQ_DIV  = 15        # 15->80Mhz
+ET_FS               = 1MB       # 8Mbit (1MB) flash size in esptool flash command
+ET_FF               = 80m       # 80Mhz flash speed in esptool flash command
+ET_FM               = dout      # Valid values are keep, qio, qout, dio, dout
+ET_BLANK            = 0xFE000   # where to flash blank.bin
+ET_DEFAULTS         = 0xFC000   # where to flash esp_init_data_default.bin to default SDK settings
+DEFINES             += -DFLASH_1MB
+CFLAGS              += -mforce-l32
+endif
+
+FLASH_BAUD          ?= 115200 # The flash baud rate
+
+DEFINES += -DESP_COMBINED_SIZE=$(ESP_COMBINED_SIZE)
+
+# move os_printf strings into flash to save RAM space
+DEFINES += -DUSE_OPTIMIZE_PRINTF
+DEFINES += -D__ETS__ -DICACHE_FLASH -DXTENSA -DUSE_US_TIMER
+LIBS    += -lc -lgcc -lhal -lphy -lpp -lnet80211 -llwip_536 -lwpa -lmain -lpwm -lcrypto
+CFLAGS  += -fno-builtin \
+-Wno-maybe-uninitialized -Wno-old-style-declaration -Wno-conversion -Wno-unused-variable \
+-Wno-unused-parameter -Wno-ignored-qualifiers \
+-Wno-parentheses -Wno-type-limits -Wno-unused-function -Wno-unused-value \
+-Wl,EL -Wl,--gc-sections -nostdlib -mlongcalls -mtext-section-literals \
+-fno-guess-branch-probability -freorder-blocks-and-partition -fno-cse-follow-jumps \
+-fno-tree-fre -fno-ipa-sra -fno-signed-zeros -fno-trapping-math -fassociative-math \
+-fno-caller-saves -fno-move-loop-invariants -fno-tree-tail-merge -fno-tree-copy-prop 
+
+# The Root of the ESP8266_SDK distributed by Espressif
+# This must be supplied as a Make environment variable.
+ifndef ESP8266_SDK_ROOT
+$(error "The ESP8266_SDK_ROOT variable must be set")
+endif
+
+# The pefix for the xtensa toolchain
+CCPREFIX=xtensa-lx106-elf-
+DEFINES += -DESP8266
+
+# Extra flags passed to the linker
+LDFLAGS += -L$(ESP8266_SDK_ROOT)/lib \
+-nostdlib \
+-Wl,--no-check-sections \
+-u call_user_start \
+-Wl,-static
+
+# Extra source files specific to the ESP8266
+SOURCES += targets/esp8266/uart.c \
+	targets/esp8266/spi.c \
+	targets/esp8266/user_main.c \
+	targets/esp8266/log.c \
+	targets/esp8266/jshardware.c \
+	targets/esp8266/i2c_master.c \
+	targets/esp8266/esp8266_board_utils.c \
+	libs/network/esp8266/network_esp8266.c
+
+ifdef DEBUG
+SOURCES += 	targets/esp8266/gdbstub.c \
+	targets/esp8266/gdbstub-entry.S 
+endif
+
+# The tool used for building the firmware and flashing
+ESPTOOL    ?= $(ESP8266_SDK_ROOT)/esptool/esptool.py
+
+# Extra include directories specific to the ESP8266
+INCLUDE += -I$(ESP8266_SDK_ROOT)/include -I$(ROOT)/targets/esp8266
