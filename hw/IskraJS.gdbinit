@@ -13,16 +13,20 @@ set tcp connect-timeout 1
 ## manual run
 # set height 10
 # set pagination on
-# layout split
+layout split
 # layout asm
 # layout reg
-# target extended-remote :3333
+target extended-remote :3333
 # set substitute-path /home/dponyatov/flic/ ./
 # set substitute-path /home/pere/src/newlib-salsa /home/dponyatov/stm32/ref/newlib-salsa
 ## on load
 # b Reset_Handler
 # b SystemInit
 # b main
-# interrupt
-# c
-# monitor reset halt
+b MX_GPIO_Init
+interrupt
+c
+monitor reset halt
+
+set $gp = GPIO_InitStruct
+p $gp

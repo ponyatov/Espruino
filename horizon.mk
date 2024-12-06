@@ -31,12 +31,12 @@ cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
 
 # debug
 .PHONY: openocd
-openocd: $(TMP)/$(HW)/$(MODULE).hex
-	$@ -f openocd.cfg
+openocd: $(TMP)/$(HW)/$(MODULE).elf
+	$@ -f $(CWD)/hw/$(HW).openocd
 
 .PHONY: gdb
 gdb: $(TMP)/$(HW)/$(MODULE).elf
-	$@-multiarch -q -x $(CWD)/.gdbinit $<
+	$@-multiarch -q -x $(CWD)/hw/$(HW).gdbinit $<
 
 # doc
 .PHONY: doc
