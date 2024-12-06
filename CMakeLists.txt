@@ -46,6 +46,5 @@ add_executable(${CMAKE_PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME})
 
 include(version)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${HW}_${GIT_BRANCH}_${GIT_HASH}")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${FW_OUTPUT_NAME})
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
