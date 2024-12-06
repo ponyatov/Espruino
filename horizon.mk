@@ -1,5 +1,8 @@
 # tiny scripts
 
+# var
+MODULE = $(notdir $(CURDIR))
+
 # board files
 BOARD ?= HORIZON
 HW    ?= IskraJS
@@ -25,6 +28,15 @@ cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
 	cmake --preset $(HW) -S $(CWD) -B $(TMP)/$(BOARD)
 	cmake --build $(TMP)/$(BOARD)
 	cmake --install $(TMP)/$(BOARD)
+
+# debug
+.PHONY: openocd
+openocd: $(TMP)/$(HW)/$(MODULE).hex
+	$@ -f openocd.cfg
+
+.PHONY: gdb
+gdb: $(TMP)/$(HW)/$(MODULE).elf
+	$@-multiarch -q -x $(CWD)/.gdbinit $<
 
 # doc
 .PHONY: doc

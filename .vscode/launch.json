@@ -46,6 +46,26 @@
             ]
         },
         {
+            "name": "IskraJS",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "serverpath": "/usr/bin/openocd",
+            "executable": "${workspaceFolder}/tmp/IskraJS/${workspaceFolderBasename}.elf",
+            "objdumpPath": "/usr/bin/arm-none-eabi-objdump",
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "cwd": "${workspaceFolder}",
+            "configFiles": ["${workspaceFolder}/hw/IskraJS.openocd"],
+            "postRestartCommands": [
+                "b Reset_Handler",
+                "b SystemInit",
+                "b main",
+                "interrupt",
+                "c",
+                "monitor reset halt"
+            ]
+        },
+        {
             "name": "espruino",
             "type": "cortex-debug",
             "request": "launch",
