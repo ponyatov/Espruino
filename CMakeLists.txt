@@ -19,23 +19,23 @@ file(GLOB_RECURSE A
 )
 file(GLOB_RECURSE C
     # "${SRC}/*.c*"
-    # "${CWD}/hw/${HW}/Core/Src/*.c*"
-    # "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Src/*.c*"
+    "${CWD}/hw/${HW}/Core/Src/*.c*"
+    "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Src/*.c*"
 )
 file(GLOB_RECURSE H
     # "${INC}/*.h*"
-    # "${CWD}/hw/${HW}/Core/Inc/*.h*"
-    # "${CWD}/hw/${HW}/Drivers/CMSIS/Include/*.h*"
-    # "${CWD}/hw/${HW}/Drivers/CMSIS/Device/ST/${HAL}xx/Include/*.h*"
-    # "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Inc/*.h*"
+    "${CWD}/hw/${HW}/Core/Inc/*.h*"
+    "${CWD}/hw/${HW}/Drivers/CMSIS/Include/*.h*"
+    "${CWD}/hw/${HW}/Drivers/CMSIS/Device/ST/${HAL}xx/Include/*.h*"
+    "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Inc/*.h*"
 )
 
 include_directories(
     ${INC} ${TMP}
-    # "${CWD}/hw/${HW}/Core/Inc"
-    # "${CWD}/hw/${HW}/Drivers/CMSIS/Include"
-    # "${CWD}/hw/${HW}/Drivers/CMSIS/Device/ST/${HAL}xx/Include"
-    # "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Inc"
+    "${CWD}/hw/${HW}/Core/Inc"
+    "${CWD}/hw/${HW}/Drivers/CMSIS/Include"
+    "${CWD}/hw/${HW}/Drivers/CMSIS/Device/ST/${HAL}xx/Include"
+    "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Inc"
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
