@@ -5,6 +5,10 @@ BOARD ?= HORIZON
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
 
+# dirs
+CWD = $(CURDIR)
+TMP = $(CWD)/tmp
+
 # patched source code:
 C += src/jsinteractive.c
 H += 
@@ -14,6 +18,10 @@ P += $(PYDEF)
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
 	BOARD=$(BOARD) DEBUG=1 make boardjson
+
+.PHONY: cmake
+cmake: CMakePresets.txt CMakeLists cmake/* cpu/*.cmake arch/*.cmake
+	cmake --preset $(BOARD) -S $(CWD) -B $(TMP)/$(BOARD)
 
 # doc
 .PHONY: doc
