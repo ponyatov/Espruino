@@ -53,4 +53,4 @@ include(version)
 install(
     PROGRAMS ${TMP}/${HW}/${CMAKE_PROJECT_NAME}.elf
     DESTINATION ${CMAKE_INSTALL_PREFIX}
-    RENAME ${FW_OUTPUT_NAME})
+    RENAME ${FW_OUTPUT_NAME}.elf)

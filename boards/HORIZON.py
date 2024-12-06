@@ -19,14 +19,14 @@ import subprocess
 import time
 import pinutils
 
-NOW = time.strftime('%y%m%d_%H%M',time.localtime())
+HW = 'IskraJS'
+
+NOW = time.strftime('%y%m%d',time.localtime())
 
 REL = subprocess.check_output(['git', 'rev-parse', '--short=5', 'HEAD']).decode('ascii').strip()
+BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('ascii').strip()
 
-URL = 'https://github.com/ponyatov/Espruino/archive/refs/tags'
-
-import time
-now = time.strftime('%y%m%d_%H%M',time.localtime())
+URL = 'https://github.com/ponyatov/Espruino/releases/download/061224-5a08a'
 
 info = {
     'name' : "Iskra JS",
@@ -36,8 +36,8 @@ info = {
     'variables' : 7423, # (128-12)*1024/16-1
     'bootloader' : 0,
     'flash_base': 0x08008000,
-    'binary_name' : f'horizon_%v_{NOW}_{REL}.bin',
-    'images_url_base': f'{URL}/img/',
+    'binary_name' : f'{HW}_%v_{BRANCH}_{REL}_{NOW}.bin',
+    'images_url_base': f'{URL}/',
     'binaries_url_base': f'{URL}/',
     'json_url': f'{URL}/HORIZON.json',
 
@@ -47,7 +47,7 @@ info = {
             'USB_HID',
             # 'NET',
             # 'GRAPHICS',
-            'TV',
+            # 'TV',
             'FILESYSTEM',
             # 'WIZNET',
             # 'CRYPTO','SHA256','SHA512',

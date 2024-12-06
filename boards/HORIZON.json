@@ -9,10 +9,10 @@
   "variables": 7423,
   "bootloader": 0,
   "flash_base": 134250496,
-  "binary_name": "iskrajs_%v_241206_1837.bin",
-  "images_url_base": "http://js.amperka.ru/img/",
-  "binaries_url_base": "http://js.amperka.ru/binaries/",
-  "json_url": "http://js.amperka.ru/json/ISKRAJS.json",
+  "binary_name": "IskraJS_%v_dponyatov_0e993_241206.elf",
+  "images_url_base": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/",
+  "binaries_url_base": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/",
+  "json_url": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/HORIZON.json",
   "build": {
    "optimizeflags": "-Os -std=c11",
    "libraries": [
@@ -28,10 +28,10 @@
     "JSMODULESOURCES+=libs/js/AT.min.js"
    ]
   },
-  "image_url": "http://js.amperka.ru/img/HORIZON.jpg",
-  "thumb_url": "http://js.amperka.ru/img/HORIZON_thumb.jpg",
+  "image_url": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/HORIZON.jpg",
+  "thumb_url": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/HORIZON_thumb.jpg",
   "binary_version": "2v22",
-  "binary_url": "http://js.amperka.ru/binaries/iskrajs_2v22_241206_1837.bin",
+  "binary_url": "https://github.com/ponyatov/Espruino/releases/download/061224-5a08a/IskraJS_2v22_dponyatov_0e993_241206.elf",
   "builtin_modules": [
    "Flash",
    "Storage",

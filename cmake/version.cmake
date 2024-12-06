@@ -19,4 +19,4 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-set(FW_OUTPUT_NAME "${HW}_${BRANCH}_${REL}_${NOW}")
+set(FW_OUTPUT_NAME "${HW}_22v2_${BRANCH}_${REL}_${NOW}")

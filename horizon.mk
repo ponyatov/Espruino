@@ -11,7 +11,9 @@ include mk/src.mk
 
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
-	BOARD=$(BOARD) DEBUG=1 make boardjson
+	BOARD=$(BOARD) DEBUG=1 make
+# clean
+# boardjson
 
 .PHONY: cmake
 cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
