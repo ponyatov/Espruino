@@ -34,3 +34,4 @@ MERGE += horizon.mk Makefile README.md apt.Debian
 MERGE += Doxyfile .clang-format .gitignore
 MERGE += CMakePresets.json CMakeLists.txt cmake
 MERGE += $(C) $(H) $(S) $(P)
+MERGE += hw cpu arch
