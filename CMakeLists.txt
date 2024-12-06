@@ -15,7 +15,7 @@ set(TMP ${CWD}/tmp)
 
 file(GLOB_RECURSE A
     # "${SRC}/*.s*"
-    # "${CWD}/hw/${HW}/*.s"
+    "${CWD}/hw/${HW}/*.s"
 )
 file(GLOB_RECURSE C
     "${SRC}/*.c*"
