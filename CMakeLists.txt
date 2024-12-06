@@ -18,12 +18,12 @@ file(GLOB_RECURSE A
     "${CWD}/hw/${HW}/*.s"
 )
 file(GLOB_RECURSE C
-    "${SRC}/*.c*"
+    # "${SRC}/*.c*"
     # "${CWD}/hw/${HW}/Core/Src/*.c*"
     # "${CWD}/hw/${HW}/Drivers/${HAL}xx_HAL_Driver/Src/*.c*"
 )
 file(GLOB_RECURSE H
-    "${INC}/*.h*"
+    # "${INC}/*.h*"
     # "${CWD}/hw/${HW}/Core/Inc/*.h*"
     # "${CWD}/hw/${HW}/Drivers/CMSIS/Include/*.h*"
     # "${CWD}/hw/${HW}/Drivers/CMSIS/Device/ST/${HAL}xx/Include/*.h*"
