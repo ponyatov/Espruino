@@ -1,7 +1,7 @@
 include mk/var.mk
 
 # board files
-BOARD ?= HORIZON
+BOARD ?= F4DISCO
 HW    ?= IskraJS
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
@@ -11,7 +11,7 @@ include mk/src.mk
 
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
-	BOARD=$(BOARD) DEBUG=1 make
+	BOARD=$(BOARD) DEBUG=1 make boardjson
 # clean
 # boardjson
 
