@@ -2,6 +2,7 @@
 
 # board files
 BOARD ?= HORIZON
+HW    ?= IskraJS
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
 
@@ -20,8 +21,9 @@ $(JSON): $(PYDEF)
 	BOARD=$(BOARD) DEBUG=1 make boardjson
 
 .PHONY: cmake
-cmake: CMakePresets.txt CMakeLists cmake/* cpu/*.cmake arch/*.cmake
-	cmake --preset $(BOARD) -S $(CWD) -B $(TMP)/$(BOARD)
+cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
+	cmake --preset $(HW) -S $(CWD) -B $(TMP)/$(BOARD)
+	cmake --build $(TMP)/$(BOARD)
 
 # doc
 .PHONY: doc
