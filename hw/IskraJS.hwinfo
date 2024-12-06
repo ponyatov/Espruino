@@ -1,0 +1,7 @@
+Found 1 stlink programmers
+  version:    V2J37S26
+  serial:     066FFF565277524867093226
+  flash:      1048576 (pagesize: 16384)
+  sram:       196608
+  chipid:     0x0413
+  descr:      F4xx

@@ -1,32 +1,25 @@
-# tiny scripts
-
 include mk/var.mk
 
 # board files
 BOARD ?= HORIZON
+HW    ?= IskraJS
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
 
-# patched source code:
-C += src/jsinteractive.c
-H += 
-S += targetlibs/stm32f4/lib/startup_stm32f40_41xxx.s
-P += $(PYDEF)
+include mk/dirs.mk
+include mk/src.mk
 
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
 	BOARD=$(BOARD) DEBUG=1 make boardjson
 
+.PHONY: cmake
+cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
+	cmake --preset $(HW) -S $(CWD) -B $(TMP)/$(BOARD)
+	cmake --build $(TMP)/$(BOARD)
+	cmake --install $(TMP)/$(BOARD)
+
+include mk/debug.mk
 include mk/doc.mk
-
-# install
-.PHONY: install update ref gz
-install: doc ref gz
-	$(MAKE) update
-update:
-	sudo apt update
-	sudo apt install -uy `cat apt.$(shell lsb_release -si)`
-ref: $(REF)
-gz:  $(GZ)
-
+include mk/install.mk
 include mk/merge.mk

@@ -39,7 +39,7 @@
             "inherits": "cortexM4",
             "cacheVariables": {
                  "HW": "IskraJS",
-                "CPU": "STM32F405RG",
+                "CPU": "STM32F405RGT",
                 "HAL": "STM32F4"
             }
         }

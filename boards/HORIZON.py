@@ -25,6 +25,9 @@ REL = subprocess.check_output(['git', 'rev-parse', '--short=5', 'HEAD']).decode(
 
 URL = 'https://github.com/ponyatov/Espruino/archive/refs/tags'
 
+import time
+now = time.strftime('%y%m%d_%H%M',time.localtime())
+
 info = {
     'name' : "Iskra JS",
     'link' :  [ "http://amperka.ru/product/iskra-js" ],
@@ -42,19 +45,19 @@ info = {
         'optimizeflags' : '-Os -std=c11',
         'libraries' : [
             'USB_HID',
-            'NET',
-            'GRAPHICS',
+            # 'NET',
+            # 'GRAPHICS',
             'TV',
             'FILESYSTEM',
-            'WIZNET',
-            'CRYPTO','SHA256','SHA512',
-            'TLS',
-            'NEOPIXEL'
+            # 'WIZNET',
+            # 'CRYPTO','SHA256','SHA512',
+            # 'TLS',
+            # 'NEOPIXEL'
         ],
         'makefile' : [
             'WRAPPERSOURCES+=targets/iskrajs/jswrap_iskrajs.c',
-            'DEFINES+=-DUSE_USB_OTG_FS=1',
-            'DEFINES+=-DISKRAJS_LOGO',
+            # 'DEFINES+=-DUSE_USB_OTG_FS=1',
+            'DEFINES+=-DHORIZON_LOGO',
             'STLIB=STM32F405xx',
             'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
             'JSMODULESOURCES+=libs/js/AT.min.js'

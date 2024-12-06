@@ -1,6 +1,31 @@
 # Auto detect text files and perform LF normalization
 * text=auto eol=lf
 
+# All source code in UNIX format
+*.c   text diff=cpp
+*.cpp text diff=cpp
+*.h   text diff=cpp
+*.hpp text diff=cpp
+*.s   text
+*.S   text
+*.ld  text
+
+# Binary files
+*.bin binary
+*.elf binary
+*.dfu binary
+*.png binary
+*.pdf binary
+
+# Linux
+*.sh      text eol=lf
+*.rc      text eol=lf
+*.service text eol=lf
+
+# Windows/MSYS
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
 # Custom for Visual Studio
 *.cs     diff=csharp
 
