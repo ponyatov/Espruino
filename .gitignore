@@ -78,7 +78,6 @@ arm-gnu-toolchain*
 /targetlibs/nrf5x_17/documentation
 /targetlibs/raspberrypi
 /js
-/.vscode
 /CURRENT_BOARD.make
 /topreadonly
 /topstrings
