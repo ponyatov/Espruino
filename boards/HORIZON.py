@@ -17,6 +17,9 @@
 
 import pinutils;
 
+import time
+now = time.strftime('%y%m%d_%H%M',time.localtime())
+
 info = {
     'name' : "Iskra JS",
     'link' :  [ "http://amperka.ru/product/iskra-js" ],
@@ -25,7 +28,7 @@ info = {
     'variables' : 7423, # (128-12)*1024/16-1
     'bootloader' : 0,
     'flash_base': 0x08008000,
-    'binary_name' : 'espruino_%v_iskrajs.bin',
+    'binary_name' : f'iskrajs_%v_{now}.bin',
     'images_url_base': 'http://js.amperka.ru/img/',
     'binaries_url_base': 'http://js.amperka.ru/binaries/',
     'json_url': 'http://js.amperka.ru/json/ISKRAJS.json',
@@ -34,19 +37,19 @@ info = {
         'optimizeflags' : '-Os -std=c11',
         'libraries' : [
             'USB_HID',
-            'NET',
-            'GRAPHICS',
+            # 'NET',
+            # 'GRAPHICS',
             'TV',
             'FILESYSTEM',
-            'WIZNET',
-            'CRYPTO','SHA256','SHA512',
-            'TLS',
-            'NEOPIXEL'
+            # 'WIZNET',
+            # 'CRYPTO','SHA256','SHA512',
+            # 'TLS',
+            # 'NEOPIXEL'
         ],
         'makefile' : [
             'WRAPPERSOURCES+=targets/iskrajs/jswrap_iskrajs.c',
-            'DEFINES+=-DUSE_USB_OTG_FS=1',
-            'DEFINES+=-DISKRAJS_LOGO',
+            # 'DEFINES+=-DUSE_USB_OTG_FS=1',
+            'DEFINES+=-DHORIZON_LOGO',
             'STLIB=STM32F405xx',
             'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
             'JSMODULESOURCES+=libs/js/AT.min.js'

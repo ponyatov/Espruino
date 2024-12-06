@@ -9,7 +9,7 @@
   "variables": 7423,
   "bootloader": 0,
   "flash_base": 134250496,
-  "binary_name": "espruino_%v_iskrajs.bin",
+  "binary_name": "iskrajs_%v_241206_1837.bin",
   "images_url_base": "http://js.amperka.ru/img/",
   "binaries_url_base": "http://js.amperka.ru/binaries/",
   "json_url": "http://js.amperka.ru/json/ISKRAJS.json",
@@ -17,21 +17,12 @@
    "optimizeflags": "-Os -std=c11",
    "libraries": [
     "USB_HID",
-    "NET",
-    "GRAPHICS",
     "TV",
-    "FILESYSTEM",
-    "WIZNET",
-    "CRYPTO",
-    "SHA256",
-    "SHA512",
-    "TLS",
-    "NEOPIXEL"
+    "FILESYSTEM"
    ],
    "makefile": [
     "WRAPPERSOURCES+=targets/iskrajs/jswrap_iskrajs.c",
-    "DEFINES+=-DUSE_USB_OTG_FS=1",
-    "DEFINES+=-DISKRAJS_LOGO",
+    "DEFINES+=-DHORIZON_LOGO",
     "STLIB=STM32F405xx",
     "PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o",
     "JSMODULESOURCES+=libs/js/AT.min.js"
@@ -40,21 +31,13 @@
   "image_url": "http://js.amperka.ru/img/HORIZON.jpg",
   "thumb_url": "http://js.amperka.ru/img/HORIZON_thumb.jpg",
   "binary_version": "2v22",
-  "binary_url": "http://js.amperka.ru/binaries/espruino_2v22_iskrajs.bin",
+  "binary_url": "http://js.amperka.ru/binaries/iskrajs_2v22_241206_1837.bin",
   "builtin_modules": [
    "Flash",
    "Storage",
    "heatshrink",
    "fs",
-   "net",
-   "dgram",
-   "tls",
-   "http",
-   "NetworkJS",
-   "WIZnet",
-   "tv",
-   "crypto",
-   "neopixel"
+   "tv"
   ]
  },
  "chip": {
