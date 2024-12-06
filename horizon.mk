@@ -24,6 +24,7 @@ $(JSON): $(PYDEF)
 cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
 	cmake --preset $(HW) -S $(CWD) -B $(TMP)/$(BOARD)
 	cmake --build $(TMP)/$(BOARD)
+	cmake --install $(TMP)/$(BOARD)
 
 # doc
 .PHONY: doc
