@@ -13,6 +13,9 @@ set(INC ${CWD}/src)
 set(SRC ${CWD}/src)
 set(TMP ${CWD}/tmp)
 
+file(GLOB_RECURSE LD
+    "${CWD}/hw/${HW}/*.ld"
+)
 file(GLOB_RECURSE A
     # "${SRC}/*.s*"
     "${CWD}/hw/${HW}/*.s"
@@ -39,7 +42,7 @@ include_directories(
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
-    ${C} ${H} ${A}
+    ${C} ${H} ${A} ${LD}
     # ${FLEX_lex_OUTPUTS} ${BISON_yacc_OUTPUTS}
 )
 
