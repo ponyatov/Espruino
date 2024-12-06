@@ -15,7 +15,15 @@
 # as various source and header files for Espruino.
 # ----------------------------------------------------------------------------------------
 
-import pinutils;
+import subprocess
+import time
+import pinutils
+
+NOW = time.strftime('%y%m%d_%H%M',time.localtime())
+
+REL = subprocess.check_output(['git', 'rev-parse', '--short=5', 'HEAD']).decode('ascii').strip()
+
+URL = 'https://github.com/ponyatov/Espruino/archive/refs/tags'
 
 info = {
     'name' : "Iskra JS",
@@ -25,10 +33,10 @@ info = {
     'variables' : 7423, # (128-12)*1024/16-1
     'bootloader' : 0,
     'flash_base': 0x08008000,
-    'binary_name' : 'espruino_%v_iskrajs.bin',
-    'images_url_base': 'http://js.amperka.ru/img/',
-    'binaries_url_base': 'http://js.amperka.ru/binaries/',
-    'json_url': 'http://js.amperka.ru/json/ISKRAJS.json',
+    'binary_name' : f'horizon_%v_{NOW}_{REL}.bin',
+    'images_url_base': f'{URL}/img/',
+    'binaries_url_base': f'{URL}/',
+    'json_url': f'{URL}/HORIZON.json',
 
     'build' : {
         'optimizeflags' : '-Os -std=c11',

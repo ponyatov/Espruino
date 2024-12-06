@@ -104,5 +104,7 @@
         "editor.defaultFormatter": "ms-python.autopep8",
         "editor.formatOnSave": true
     },
-    "cortex-debug.variableUseNaturalFormat": false,
+    "python.analysis.extraPaths": [
+        "./scripts"
+    ],
 }

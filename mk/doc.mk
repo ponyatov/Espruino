@@ -1,0 +1,3 @@
+# doc
+.PHONY: doc
+doc:

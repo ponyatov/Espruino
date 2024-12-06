@@ -1,5 +1,7 @@
 # tiny scripts
 
+include mk/var.mk
+
 # board files
 BOARD ?= HORIZON
 JSON   = boards/$(BOARD).json
@@ -15,9 +17,7 @@ P += $(PYDEF)
 $(JSON): $(PYDEF)
 	BOARD=$(BOARD) DEBUG=1 make boardjson
 
-# doc
-.PHONY: doc
-doc:
+include mk/doc.mk
 
 # install
 .PHONY: install update ref gz
@@ -29,8 +29,4 @@ update:
 ref: $(REF)
 gz:  $(GZ)
 
-# merge
-MERGE += horizon.mk Makefile README.md apt.Debian
-MERGE += Doxyfile .clang-format .gitignore
-MERGE += CMakePresets.json CMakeLists.txt cmake
-MERGE += $(C) $(H) $(S) $(P)
+include mk/merge.mk
