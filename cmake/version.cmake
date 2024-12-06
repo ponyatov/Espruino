@@ -1,5 +1,5 @@
 execute_process(
-    COMMAND git rev-parse --short=4 HEAD
+    COMMAND git rev-parse --short=3 HEAD
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     OUTPUT_VARIABLE REL
     OUTPUT_STRIP_TRAILING_WHITESPACE
