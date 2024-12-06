@@ -44,3 +44,6 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${HW}")
+install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
