@@ -2,7 +2,6 @@ include mk/var.mk
 
 # board files
 BOARD ?= F4DISCO
-HW    ?= IskraJS
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
 
@@ -17,7 +16,7 @@ $(JSON): $(PYDEF)
 
 .PHONY: cmake
 cmake: CMakePresets.json CMakeLists.txt cmake/* cpu/*.cmake arch/*.cmake
-	cmake --preset $(HW) -S $(CWD) -B $(TMP)/$(BOARD)
+	cmake --preset $(BOARD) -S $(CWD) -B $(TMP)/$(BOARD)
 	cmake --build $(TMP)/$(BOARD)
 	cmake --install $(TMP)/$(BOARD)
 

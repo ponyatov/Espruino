@@ -35,11 +35,20 @@
             }
         },
         {
-            "name": "IskraJS",
+            "name": "HORIZON",
             "inherits": "cortexM4",
             "cacheVariables": {
-                 "HW": "IskraJS",
+                 "HW": "HORIZON",
                 "CPU": "STM32F405RGT",
+                "HAL": "STM32F4"
+            }
+        },
+        {
+            "name": "F4DISCO",
+            "inherits": "cortexM4",
+            "cacheVariables": {
+                 "HW": "F4DISCO",
+                "CPU": "STM32F407VGT",
                 "HAL": "STM32F4"
             }
         }
