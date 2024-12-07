@@ -1,8 +1,8 @@
 # debug
 .PHONY: openocd
-openocd: $(TMP)/$(HW)/$(MODULE).elf
-	$@ -f $(CWD)/hw/$(HW).openocd
+openocd: $(CWD)/hw/$(BOARD)/$(BOARD).openocd $(TMP)/$(BOARD)/$(MODULE).elf
+	$@ -f $<
 
 .PHONY: gdb
-gdb: $(TMP)/$(HW)/$(MODULE).elf
-	$@-multiarch -q -x $(CWD)/hw/$(HW).gdbinit $<
+gdb: $(TMP)/$(BOARD)/$(MODULE).elf
+	$@-multiarch -q -x $(CWD)/hw/$(BOARD)/$(BOARD).gdbinit $<
