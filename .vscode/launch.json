@@ -17,13 +17,22 @@
             // "filterStderr": true,
             // "filterStdout": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerPath": "gdb-multiarch",
             "miDebuggerArgs": "--silent",
             "miDebuggerServerAddress": "localhost:3333",
             "useExtendedRemote": true,
-            "serverLaunchTimeout": 1000,
-            "debugServerPath": "/usr/bin/openocd",
-            
+            "serverLaunchTimeout": 3000,
+            // "debugServerPath": "openocd",
+            // "debugServerArgs": "-f ${workspaceRoot}/hw/F4DISCO/F4DISCO.openocd",
+            // "serverStarted": "connections",
+            "postRemoteConnectCommands": [
+                {"text": "load"},
+                {"text": "b SystemInit"},
+                {"text": "b SystemClock_Config"},
+                {"text": "b MX_GPIO_Init"},
+                {"text": "b main"}
+            ],
+            "launchCompleteCommand": "exec-continue"
         },
         {
             "name": "STM32F407G-DISC1",
