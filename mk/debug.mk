@@ -1,12 +1,19 @@
 # debug
+
+ELF = $(BIN)/$(BOARD)_$(ESPVER).elf
+SYM = $(BIN)/$(BOARD)_$(ESPVER).sym
+HW  = $(CWD)/hw/$(BOARD)/$(BOARD)
+
 .PHONY: openocd
-openocd: $(CWD)/hw/$(BOARD)/$(BOARD).openocd $(TMP)/$(BOARD)/$(MODULE).elf
+openocd: $(HW).openocd $(ELF)
 	$@ -f $<
 
 .PHONY: gdb
-gdb: $(TMP)/$(BOARD)/$(MODULE).elf
-	$@-multiarch -q -x $(CWD)/hw/$(BOARD)/$(BOARD).gdbinit $<
+gdb: $(ELF)
+	$@-multiarch -q -x $(HW).gdbinit $<
 
-.PHONY: debug
-debug: $(BIN)/$(BOARD)_$(ESPVER).elf
-	gdb-multiarch -q $< -x $(CWD)/hw/$(BOARD)/$(BOARD).gdbinit
+.PHONY: sym
+sym: $(SYM)
+$(SYM): $(ELF)
+	arm-none-eabi-objcopy --only-keep-debug $< $@
+	arm-none-eabi-objcopy --strip-debug     $<

@@ -34,7 +34,7 @@ info = {
     'binary_name' : f'{HW}_%v.bin',
 
     'build' : {
-        'optimizeflags' : '-O0 -g3 -std=c11',
+        'optimizeflags' : '-O0 -ggdb -std=c11',
         'libraries' : [
             'USB_HID',
             # 'NET',

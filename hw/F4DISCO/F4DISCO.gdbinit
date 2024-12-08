@@ -12,11 +12,18 @@ monitor reset halt
 load
 i reg pc sp
 
+b Reset_Handler
+b SystemInit
+b main
+interrupt
+c
+
+# layout src
+# layout reg
+# layout asm
+
 # # mon shutdown
 # # mon exit
-# monitor reset halt
-# 
-# 
 # 
 # # ## manual run
 # # # set height 10
@@ -27,9 +34,6 @@ i reg pc sp
 # # # set substitute-path /home/dponyatov/flic/ ./
 # # # set substitute-path /home/pere/src/newlib-salsa /home/dponyatov/stm32/ref/newlib-salsa
 # ## on load
-# b Reset_Handler
-# b SystemInit
-# b main
 # # # 
 # # # "b SystemInit",
 # # # "b main",
