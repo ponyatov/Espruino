@@ -56,7 +56,7 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN 0 */
 
 #include <stdbool.h>
-bool led = false;
+uint16_t led = 0;
 
 /* USER CODE END 0 */
 
@@ -104,7 +104,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if (led)
+    led++;
+    if ((led >> 15)&1)
         LL_GPIO_SetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
     else
         LL_GPIO_ResetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);

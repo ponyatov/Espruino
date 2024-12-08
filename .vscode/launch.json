@@ -26,8 +26,8 @@
                 {"text": "load"},
                 // {"text": "b SystemInit"},
                 // {"text": "b SystemClock_Config"},
-                {"text": "b MX_GPIO_Init"},
-                {"text": "b main"}
+                // {"text": "b MX_GPIO_Init"},
+                // {"text": "b main"}
             ],
             "launchCompleteCommand": "exec-continue"
         },
