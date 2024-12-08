@@ -120,9 +120,9 @@ int main(void)
               LL_GPIO_SetOutputPin(LED6_BLUE_GPIO_Port, LED6_BLUE_Pin);
               break;
       }
-      /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-      /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
