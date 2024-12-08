@@ -15,11 +15,11 @@
 # as various source and header files for Espruino.
 # ----------------------------------------------------------------------------------------
 
+import os, sys, time
 import subprocess
-import time
 import pinutils
 
-HW = 'f4disco'
+HW = 'F4DISCO'
 
 REL    = subprocess.check_output(['git', 'rev-parse', '--short=5', 'HEAD']).decode('ascii').strip()
 BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('ascii').strip()
