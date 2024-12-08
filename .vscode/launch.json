@@ -6,7 +6,7 @@
     "configurations": [
         {
             // https://t.me/proembedded/645181
-            "name": "F4DISCO_gdb",
+            "name": "F4DISCO",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
@@ -53,22 +53,6 @@
                 "b MX_GPIO_Init",
                 "monitor reset halt"
                 // "c"
-            ]
-        },
-        {
-            "name": "F4DISCO",
-            "type": "cortex-debug",
-            "request": "launch",
-            "servertype": "openocd",
-            "serverpath": "/usr/bin/openocd",
-            "executable": "${workspaceFolder}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
-            "objdumpPath": "/usr/bin/arm-none-eabi-objdump",
-            "gdbPath": "/usr/bin/gdb-multiarch",
-            "cwd": "${workspaceFolder}",
-            "configFiles": ["${workspaceFolder}/hw/F4DISCO/F4DISCO.openocd"],
-            "postRestartCommands": [
-                "b Reset_Handler",
-                "monitor reset halt"
             ]
         },
         {
