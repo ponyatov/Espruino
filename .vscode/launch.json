@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
             "cwd": "${workspaceRoot}",
             // "preLaunchTask": "${defaultBuildTask}",
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb-multiarch",
             "miDebuggerArgs": "--silent",
