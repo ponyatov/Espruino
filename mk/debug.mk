@@ -9,12 +9,11 @@ openocd: $(HW).openocd $(ELF)
 	$@ -f $<
 
 .PHONY: gdb
-gdb: $(ELF) $(SYM)
-	$@-multiarch -q -s $(SYM) -e $(ELF)
-#  -x $(HW).gdbinit
+gdb: $(ELF) $(SYM) $(HW).gdbinit
+	$@-multiarch -q -s $(SYM) -e $(ELF) -x $(HW).gdbinit
 
 .PHONY: sym
 sym: $(SYM)
 $(SYM): $(ELF)
 	arm-none-eabi-objcopy --only-keep-debug $< $@
-	arm-none-eabi-objcopy --strip-debug     $<
+# arm-none-eabi-objcopy --strip-debug     $<

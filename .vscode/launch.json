@@ -10,7 +10,7 @@
             "type": "cppdbg",
             "request": "launch",
             // "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
-            "program": "${workspaceRoot}/bin/F4DISCO_22v2.elf",
+            "program": "${workspaceRoot}/bin/F4DISCO_2v22.elf",
             "cwd": "${workspaceRoot}",
             // "preLaunchTask": "${defaultBuildTask}",
             "stopAtEntry": false,
@@ -25,10 +25,12 @@
             // "serverStarted": "connections",
             "postRemoteConnectCommands": [
                 {"text": "load"},
-                // {"text": "b SystemInit"},
-                // {"text": "b SystemClock_Config"},
-                // {"text": "b MX_GPIO_Init"},
-                // {"text": "b main"}
+                {"text": "b Reset_Handler"},
+                {"text": "b SystemInit"},
+                {"text": "b SystemClock_Config"},
+                {"text": "b MX_GPIO_Init"},
+                {"text": "b main"},
+                {"text": "monitor reset halt"}
             ],
             "launchCompleteCommand": "exec-continue"
         },
