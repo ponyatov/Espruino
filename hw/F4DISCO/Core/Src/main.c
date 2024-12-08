@@ -55,6 +55,9 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+#include <stdbool.h>
+bool led = false;
+
 /* USER CODE END 0 */
 
 /**
@@ -101,6 +104,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (led)
+        LL_GPIO_SetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
+    else
+        LL_GPIO_ResetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
