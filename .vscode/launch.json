@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
             "cwd": "${workspaceRoot}",
             // "preLaunchTask": "${defaultBuildTask}",
-            "stopAtEntry": true,
+            // "stopAtEntry": true,
             // "externalConsole": true,
             // "filterStderr": true,
             // "filterStdout": false,
