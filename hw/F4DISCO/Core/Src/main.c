@@ -102,16 +102,27 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    led++;
-    if ((led >> 15)&1)
-        LL_GPIO_SetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
-    else
-        LL_GPIO_ResetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
-    /* USER CODE END WHILE */
+  while (1) {
+      led++;
+      LL_GPIO_ResetOutputPin(GPIOD, LED4_GREEN_Pin | LED3_ORANGE_Pin |
+                                        LED5_RED_Pin | LED6_BLUE_Pin);
+      switch ((led >> 14) & 0b11) {
+          case 0:
+              LL_GPIO_SetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
+              break;
+          case 1:
+              LL_GPIO_SetOutputPin(LED3_ORANGE_GPIO_Port, LED3_ORANGE_Pin);
+              break;
+          case 2:
+              LL_GPIO_SetOutputPin(LED5_RED_GPIO_Port, LED5_RED_Pin);
+              break;
+          case 3:
+              LL_GPIO_SetOutputPin(LED6_BLUE_GPIO_Port, LED6_BLUE_Pin);
+              break;
+      }
+      /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
+      /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -165,15 +176,15 @@ static void MX_GPIO_Init(void)
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
 
   /**/
-  LL_GPIO_ResetOutputPin(LED4_GREEN_GPIO_Port, LED4_GREEN_Pin);
+  LL_GPIO_ResetOutputPin(GPIOD, LED4_GREEN_Pin|LED3_ORANGE_Pin|LED5_RED_Pin|LED6_BLUE_Pin);
 
   /**/
-  GPIO_InitStruct.Pin = LED4_GREEN_Pin;
+  GPIO_InitStruct.Pin = LED4_GREEN_Pin|LED3_ORANGE_Pin|LED5_RED_Pin|LED6_BLUE_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(LED4_GREEN_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

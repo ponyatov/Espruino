@@ -75,6 +75,12 @@ void Error_Handler(void);
 #define HSE_OUT_GPIO_Port GPIOH
 #define LED4_GREEN_Pin LL_GPIO_PIN_12
 #define LED4_GREEN_GPIO_Port GPIOD
+#define LED3_ORANGE_Pin LL_GPIO_PIN_13
+#define LED3_ORANGE_GPIO_Port GPIOD
+#define LED5_RED_Pin LL_GPIO_PIN_14
+#define LED5_RED_GPIO_Port GPIOD
+#define LED6_BLUE_Pin LL_GPIO_PIN_15
+#define LED6_BLUE_GPIO_Port GPIOD
 #define SWDIO_Pin LL_GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin LL_GPIO_PIN_14
