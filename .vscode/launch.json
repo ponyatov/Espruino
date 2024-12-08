@@ -5,6 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // https://t.me/proembedded/645181
+            "name": "F4DISCO_gdb",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
+            "cwd": "${workspaceRoot}",
+            // "preLaunchTask": "${defaultBuildTask}",
+            "stopAtEntry": true,
+            // "externalConsole": true,
+            // "filterStderr": true,
+            // "filterStdout": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerArgs": "--silent",
+            "miDebuggerServerAddress": "localhost:3333",
+            "useExtendedRemote": true,
+            "serverLaunchTimeout": 1000,
+            "debugServerPath": "/usr/bin/openocd",
+            
+        },
+        {
             "name": "STM32F407G-DISC1",
             "type": "cortex-debug",
             "request": "launch",
