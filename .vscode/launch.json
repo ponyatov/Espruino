@@ -12,10 +12,7 @@
             "program": "${workspaceRoot}/tmp/F4DISCO/${workspaceFolderBasename}.elf",
             "cwd": "${workspaceRoot}",
             // "preLaunchTask": "${defaultBuildTask}",
-            // "stopAtEntry": true,
-            // "externalConsole": true,
-            // "filterStderr": true,
-            // "filterStdout": false,
+            "stopAtEntry": true,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb-multiarch",
             "miDebuggerArgs": "--silent",
@@ -27,8 +24,8 @@
             // "serverStarted": "connections",
             "postRemoteConnectCommands": [
                 {"text": "load"},
-                {"text": "b SystemInit"},
-                {"text": "b SystemClock_Config"},
+                // {"text": "b SystemInit"},
+                // {"text": "b SystemClock_Config"},
                 {"text": "b MX_GPIO_Init"},
                 {"text": "b main"}
             ],

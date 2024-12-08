@@ -5,34 +5,33 @@ set pagination off
 
 ## remote
 set tcp connect-timeout 1
-# set tcp auto-retry off
-
-# mon shutdown
-# mon exit
-
-## manual run
-# set height 10
-# set pagination on
-layout split
-# layout asm
-# layout reg
+set tcp auto-retry off
 target extended-remote :3333
-# set substitute-path /home/dponyatov/flic/ ./
-# set substitute-path /home/pere/src/newlib-salsa /home/dponyatov/stm32/ref/newlib-salsa
-## on load
-# b Reset_Handler
-# b SystemInit
-# b main
-# "b Reset_Handler",
-# "b SystemInit",
-# "b main",
-# "interrupt",
-# "c",
+mon shutdown
+mon exit
 
-b MX_GPIO_Init
-interrupt
-c
-monitor reset halt
+# ## manual run
+# # set height 10
+# # set pagination on
+# layout split
+# # layout asm
+# # layout reg
+# # set substitute-path /home/dponyatov/flic/ ./
+# # set substitute-path /home/pere/src/newlib-salsa /home/dponyatov/stm32/ref/newlib-salsa
+# ## on load
+# # b Reset_Handler
+# # b SystemInit
+# # b main
+# # 
+# # "b SystemInit",
+# # "b main",
+# # "interrupt",
+# # "c",
 
-set $gp = GPIO_InitStruct
-p $gp
+# b MX_GPIO_Init
+# interrupt
+# c
+# monitor reset halt
+
+# set $gp = GPIO_InitStruct
+# p $gp
