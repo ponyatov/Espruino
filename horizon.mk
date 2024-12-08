@@ -8,9 +8,14 @@ PYDEF  = boards/$(BOARD).py
 include mk/dirs.mk
 include mk/src.mk
 
+.PHONY: all
+all:
+	BOARD=$(BOARD) DEBUG=1 make clean
+	BOARD=$(BOARD) DEBUG=1 make
+
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
-	BOARD=$(BOARD) DEBUG=1 make
+	BOARD=$(BOARD) DEBUG=1 make boardjson
 # clean
 # boardjson
 

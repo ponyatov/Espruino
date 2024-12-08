@@ -1,3 +1,6 @@
+# -e: exec-file   bin/F4DISCO_2v22.elf
+# -s: symbol-file bin/F4DISCO_2v22.sym
+
 ## off paging
 set startup-quietly on
 set height 0
