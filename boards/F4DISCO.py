@@ -2,6 +2,8 @@
 # This file is part of Espruino, a JavaScript interpreter for Microcontrollers
 #
 # Copyright (C) 2013 Gordon Williams <gw@pur3.co.uk>
+# Copyright (C) 2024 Horizon Automatics
+#           (by)     Dmitry Ponyatov <dponyatov@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,29 +15,41 @@
 # as various source and header files for Espruino.
 # ----------------------------------------------------------------------------------------
 
-import pinutils;
+import subprocess
+import time
+import pinutils
+
+HW = 'f4disco'
+
+REL    = subprocess.check_output(['git', 'rev-parse', '--short=5', 'HEAD']).decode('ascii').strip()
+BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('ascii').strip()
+NOW    = time.strftime('%y%m%d',time.localtime())
+
 info = {
- 'name' : "STM32 F4 Discovery",
- 'link' :  [ "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1199/PF252419" ],
- 'default_console' : "EV_SERIAL2", # FIXME: This was S2 because of pin conflict. Not sure if it's really an issue?
- 'variables' : 5450,
- 'binary_name' : 'espruino_%v_stm32f4discovery.bin',
- 'build' : {
-   'optimizeflags' : '-O3',
-   'libraries' : [
-     'USB_HID',
-     'NET',
-     'GRAPHICS',
-     'NEOPIXEL',
-     'FILESYSTEM'
-   ],
-   'makefile' : [
-     'DEFINES+=-DUSE_USB_OTG_FS=1',
-     'STLIB=STM32F407xx',
-     'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o'
-   ]
-  }
-};
+    'name' : "STM32 F4 Discovery",
+    'link' :  [ "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1199/PF252419" ],
+    'default_console' : "EV_SERIAL2", # FIXME: This was S2 because of pin conflict. Not sure if it's really an issue?
+    'variables' : 5450,
+    #'binary_name' : f'{HW}_%v_{BRANCH}_{REL}_{NOW}.bin',
+    'binary_name' : f'{HW}_%v.bin',
+
+    'build' : {
+        'optimizeflags' : '-O0 -g3 -std=c11',
+        'libraries' : [
+            'USB_HID',
+            # 'NET',
+            # 'GRAPHICS',
+            'FILESYSTEM',
+            # 'NEOPIXEL'
+        ],
+        'makefile' : [
+            # 'DEFINES+=-DUSE_USB_OTG_FS=1',
+            'DEFINES+=-DHORIZON_LOGO',
+            'STLIB=STM32F407xx',
+            'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
+        ]
+    }
+}
 
 chip = {
   'part' : "STM32F407VGT6",
