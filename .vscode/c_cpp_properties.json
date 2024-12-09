@@ -14,9 +14,9 @@
                 "${workspaceFolder}/hw/STM32F407G-DISC1/Drivers/CMSIS/Include/core_cm4.h"
             ],
             "defines": [
-                "STM32F407xx",
+                "STM32F407xx", "STM32F4",
                 "__FPU_PRESENT",
-                "RCC", "PWR"
+                "RCC", "PWR", "USB"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
