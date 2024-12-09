@@ -545,9 +545,11 @@ static void SetSysClock(void)
 
 #if defined (STM32F40_41xxx) || defined (STM32F427_437xx) || defined (STM32F429_439xx)
     /* PCLK2 = HCLK / 2*/
+    // LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_2);
     RCC->CFGR |= RCC_CFGR_PPRE2_DIV2;
 
     /* PCLK1 = HCLK / 4*/
+    // LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_4);
     RCC->CFGR |= RCC_CFGR_PPRE1_DIV4;
 #endif /* STM32F40_41xxx || STM32F427_437x || STM32F429_439xx */
 
@@ -560,13 +562,17 @@ static void SetSysClock(void)
 #endif /* STM32F401xx */
 
     /* Configure the main PLL */
+    // LL_RCC_PLL_ConfigDomain_SYS(PLLSRC_HSE,M,N,P);
+    // LL_RCC_PLL_ConfigDomain_48M(PLLSRC_HSE,M,N,Q);
     RCC->PLLCFGR = PLL_M | (PLL_N << 6) | (((PLL_P >> 1) -1) << 16) |
                    (RCC_PLLCFGR_PLLSRC_HSE) | (PLL_Q << 24);
 
     /* Enable the main PLL */
+    // LL_RCC_PLL_Enable();
     RCC->CR |= RCC_CR_PLLON;
 
     /* Wait till the main PLL is ready */
+    // while (!LL_RCC_PLL_IsReady());
     while((RCC->CR & RCC_CR_PLLRDY) == 0)
     {
     }
