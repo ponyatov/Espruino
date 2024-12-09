@@ -16,12 +16,14 @@ monitor reset halt
 
 b Reset_Handler
 b SystemInit
-b SystemClock_Config
-b MX_GPIO_Init
+# b SystemClock_Config
+# b MX_GPIO_Init
 b main
-set $pc = Reset_Handler
+
+layout src
 si
 
+# set $pc = Reset_Handler
 # # layout src reg asm split
 # 
 # # # mon shutdown
