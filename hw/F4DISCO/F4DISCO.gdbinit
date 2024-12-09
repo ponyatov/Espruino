@@ -14,8 +14,8 @@ target extended-remote :3333
 monitor reset halt
 # load
 
-b Reset_Handler
-b SystemInit
+# b Reset_Handler
+# b SystemInit
 # b SystemClock_Config
 # b MX_GPIO_Init
 b main
