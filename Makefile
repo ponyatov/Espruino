@@ -806,7 +806,7 @@ $(PININFOFILE).c $(PININFOFILE).h: scripts/build_pininfo.py
 endif
 
 ifndef NRF5X # nRF5x devices use their own linker files that aren't automatically generated.
-$(LINKER_FILE): scripts/build_linker.py
+gen/linker.ld: scripts/build_linker.py
 	@echo ================================== Generating linker scripts
 	$(Q)$(PYTHON) scripts/build_linker.py $(BOARD) $(LINKER_FILE) $(BUILD_LINKER_FLAGS)
 endif # NRF5X
