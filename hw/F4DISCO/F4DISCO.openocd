@@ -21,5 +21,6 @@ reset_config srst_only
 # adapter speed 1800
 
 gdb_flash_program enable
+gdb_breakpoint_override hard
 
 program bin/F4DISCO_2v22.elf verify reset

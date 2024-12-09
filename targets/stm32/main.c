@@ -30,7 +30,7 @@ int main(void){
   // get in quick and relocate vector table!
   SCB->VTOR = 0x08005000;
 #else // quickly set up the vector table...
-  SCB->VTOR = (unsigned int)&_VECTOR_TABLE;
+  SCB->VTOR = (unsigned int)&_VECTOR_TABLE; // .isr_vector @ .ld file
 #endif
 
   jshInit();
@@ -64,4 +64,3 @@ int main(void){
   //jsvKill();
   //jshKill();
 }
-
