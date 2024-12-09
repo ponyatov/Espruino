@@ -29,6 +29,7 @@ SECTIONS
   .isr_vector :
   {
     . = ALIGN(4);
+    _VECTOR_TABLE = .; /* We'll need this for relocating our table */
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
