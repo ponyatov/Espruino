@@ -24,16 +24,17 @@
             // "debugServerArgs": "-f ${workspaceRoot}/hw/F4DISCO/F4DISCO.openocd",
             // "serverStarted": "connections",
             "postRemoteConnectCommands": [
-                {"text": "monitor reset halt"},
-                {"text": "load"},
+                // {"text": "monitor reset halt"},
+                // {"text": "load"},
                 {"text": "b Reset_Handler"},
                 {"text": "b SystemInit"},
                 {"text": "b SystemClock_Config"},
                 {"text": "b MX_GPIO_Init"},
                 {"text": "b main"},
                 // {"text": "monitor reset halt"},
+                // {"text": "set $pc = Reset_Handler"},
             ],
-            "launchCompleteCommand": "exec-continue"
+            // "launchCompleteCommand": "exec-continue"
         },
         {
             "name": "STM32F407G-DISC1",

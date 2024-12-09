@@ -12,5 +12,5 @@ DEFINES+=-DHORIZON_LOGO
 STLIB=STM32F407xx
 PRECOMPILED_OBJS+=$(OBJDIR)/startup_stm32f407xx.o
 $(OBJDIR)/%.o: $(ROOT)/hw/$(BOARD)/%.s
-	$(AS) -o $@ $<
+	$(AS) -g -o $@ $<
 USB:=1

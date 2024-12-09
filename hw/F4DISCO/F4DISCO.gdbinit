@@ -19,6 +19,8 @@ b SystemInit
 b SystemClock_Config
 b MX_GPIO_Init
 b main
+set $pc = Reset_Handler
+si
 
 # # layout src reg asm split
 # 
