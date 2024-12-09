@@ -10,7 +10,8 @@ openocd: $(HW).openocd $(ELF)
 
 .PHONY: gdb
 gdb: $(ELF) $(SYM) $(HW).gdbinit
-	$@-multiarch -q -s $(ELF) -e $(ELF) -x $(HW).gdbinit
+	$@-multiarch -q -s $(ELF) -x $(HW).gdbinit
+# -e $(ELF)
 
 .PHONY: sym
 sym: $(SYM)
