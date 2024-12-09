@@ -2,6 +2,7 @@ include mk/var.mk
 
 # board files
 BOARD ?= F4DISCO
+CPU   ?= STM32F407VGT
 JSON   = boards/$(BOARD).json
 PYDEF  = boards/$(BOARD).py
 
@@ -9,9 +10,9 @@ include mk/dirs.mk
 include mk/src.mk
 
 .PHONY: all
-all:
-	BOARD=$(BOARD) DEBUG=1 make clean
-	BOARD=$(BOARD) DEBUG=1 make
+all: $(CWD)/hw/$(BOARD)/$(CPU)x_FLASH.ld
+	BOARD=$(BOARD) DEBUG=1 LINKER_FILE=$< make clean
+	BOARD=$(BOARD) DEBUG=1 LINKER_FILE=$< make
 
 .PHONY: $(JSON)
 $(JSON): $(PYDEF)
