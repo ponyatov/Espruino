@@ -593,6 +593,9 @@ static void SetSysClock(void)
 
 #if defined (STM32F40_41xxx)
     /* Configure Flash prefetch, Instruction cache, Data cache and wait state */
+    // LL_FLASH_EnableInstCache();
+    // LL_FLASH_EnableDataCache();
+    // LL_FLASH_SetLatency(LL_FLASH_LATENCY_5);
     FLASH->ACR = /*FLASH_ACR_PRFTEN | */FLASH_ACR_ICEN |FLASH_ACR_DCEN |FLASH_ACR_LATENCY_5WS;
 #endif /* STM32F40_41xxx  */
 
