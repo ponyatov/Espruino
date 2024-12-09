@@ -47,7 +47,7 @@ info = {
             'DEFINES+=-DHORIZON_LOGO',
             'STLIB=STM32F407xx',
             'PRECOMPILED_OBJS+=$(OBJDIR)/startup_stm32f407xx.o',
-            '$(OBJDIR)/%.o: $(ROOT)/hw/$(BOARD)/%.s\n\t$(AS) -o $@ $<'
+            '$(OBJDIR)/%.o: $(ROOT)/hw/$(BOARD)/%.s\n\t$(AS) -g -o $@ $<'
             # 'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
         ]
     }
