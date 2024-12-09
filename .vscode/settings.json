@@ -103,7 +103,7 @@
     "autopep8.args": ["--ignore E26,E302,E305,E401,E402,E701,E702"],
     "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
     },
     "python.analysis.extraPaths": [
         "./scripts"
