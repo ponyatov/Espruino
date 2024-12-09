@@ -15,7 +15,8 @@
             ],
             "defines": [
                 "STM32F407xx",
-                "__FPU_PRESENT"
+                "__FPU_PRESENT",
+                "RCC", "PWR"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",

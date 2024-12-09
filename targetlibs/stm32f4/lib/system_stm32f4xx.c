@@ -511,9 +511,11 @@ static void SetSysClock(void)
   __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
   /* Enable HSE */
+  // LL_RCC_HSE_Enable();
   RCC->CR |= ((uint32_t)RCC_CR_HSEON);
 
   /* Wait till HSE is ready and if Time out is reached exit */
+  // while (!LL_RCC_HSE_IsReady()); HSE_STARTUP_TIMEOUT=100 @ CortexM4.cmake
   do
   {
     HSEStatus = RCC->CR & RCC_CR_HSERDY;
@@ -532,7 +534,9 @@ static void SetSysClock(void)
   if (HSEStatus == (uint32_t)0x01)
   {
     /* Select regulator voltage output Scale 1 mode */
+    // LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
     RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+    // LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
     PWR->CR |= PWR_CR_VOS;
 
     /* HCLK = SYSCLK / 1*/
