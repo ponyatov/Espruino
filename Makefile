@@ -808,7 +808,7 @@ endif
 ifndef NRF5X # nRF5x devices use their own linker files that aren't automatically generated.
 gen/linker.ld: scripts/build_linker.py
 	@echo ================================== Generating linker scripts
-	$(Q)$(PYTHON) scripts/build_linker.py $(BOARD) $(LINKER_FILE) $(BUILD_LINKER_FLAGS)
+	$(Q)$(PYTHON) scripts/build_linker.py $(BOARD) $@ $(BUILD_LINKER_FLAGS)
 endif # NRF5X
 
 $(PLATFORM_CONFIG_FILE): boards/$(BOARD).py scripts/build_platform_config.py

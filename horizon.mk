@@ -12,6 +12,7 @@ include mk/src.mk
 .PHONY: all
 all: $(CWD)/hw/$(BOARD)/$(CPU)x_FLASH.ld
 	BOARD=$(BOARD) DEBUG=1 LINKER_FILE=$< make clean
+	BOARD=$(BOARD) DEBUG=1 LINKER_FILE=$< make gen/linker.ld
 	BOARD=$(BOARD) DEBUG=1 LINKER_FILE=$< make
 
 .PHONY: $(JSON)
