@@ -540,6 +540,7 @@ static void SetSysClock(void)
     PWR->CR |= PWR_CR_VOS;
 
     /* HCLK = SYSCLK / 1*/
+    // LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
     RCC->CFGR |= RCC_CFGR_HPRE_DIV1;
 
 #if defined (STM32F40_41xxx) || defined (STM32F427_437xx) || defined (STM32F429_439xx)
