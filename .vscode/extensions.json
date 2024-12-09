@@ -13,7 +13,7 @@
         "xaver.clang-format",
         "foxundermoon.shell-format",
         // misc
-        "usernamehw.errorlens",
+        // "usernamehw.errorlens",
         // "hbenl.vscode-test-explorer",
         // C++
         "ms-vscode.cpptools",
@@ -25,16 +25,16 @@
         "rreverser.ragel",
         // embedded
         "zixuanwang.linkerscript",
-        "trond-snekvik.gnu-mapfiles",
-        "ms-vscode.hexeditor",
+        // "trond-snekvik.gnu-mapfiles",
+        // "ms-vscode.hexeditor",
         // ???
         // "stmicroelectronics.stm32-vscode-extension",
         // ARM
         "dan-c-underwood.arm",
         // CortexM
-        "marus25.cortex-debug", // two weeks of hell, now works
-        "mcu-debug.peripheral-viewer",
-        "mcu-debug.memory-view",
+        // "marus25.cortex-debug", // two weeks of hell, now works
+        // "mcu-debug.peripheral-viewer",
+        // "mcu-debug.memory-view",
         // "mcu-debug.rtos-views",
         // ESP32
         // "espressif.esp-idf-extension",
