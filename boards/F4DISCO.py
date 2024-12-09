@@ -31,7 +31,7 @@ info = {
     'default_console' : "EV_SERIAL2", # FIXME: This was S2 because of pin conflict. Not sure if it's really an issue?
     'variables' : 5450,
     #'binary_name' : f'{HW}_%v_{BRANCH}_{REL}_{NOW}.bin',
-    'binary_name' : f'{HW}_%v.bin',
+    'binary_name' : f'{HW}_%v.elf',
 
     'build' : {
         'optimizeflags' : '-O0 -g3 -std=c11',

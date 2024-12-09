@@ -10,8 +10,8 @@ set WORKAREASIZE 0x10000
 
 # vvv
 source [find target/stm32f4x.cfg]
-gdb_memory_map enable
-# gdb_memory_map disable
+# gdb_memory_map enable
+gdb_memory_map disable
 # ^^^
 
 reset_config srst_only
