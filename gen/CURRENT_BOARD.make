@@ -10,5 +10,7 @@ USE_USB_HID?=1
 USE_FILESYSTEM?=1
 DEFINES+=-DHORIZON_LOGO
 STLIB=STM32F407xx
-PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o
+PRECOMPILED_OBJS+=$(OBJDIR)/startup_stm32f407xx.o
+$(OBJDIR)/%.o: $(ROOT)/hw/$(BOARD)/%.s
+	$(AS) -o $@ $<
 USB:=1

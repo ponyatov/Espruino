@@ -46,7 +46,9 @@ info = {
             # 'DEFINES+=-DUSE_USB_OTG_FS=1',
             'DEFINES+=-DHORIZON_LOGO',
             'STLIB=STM32F407xx',
-            'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
+            'PRECOMPILED_OBJS+=$(OBJDIR)/startup_stm32f407xx.o',
+            '$(OBJDIR)/%.o: $(ROOT)/hw/$(BOARD)/%.s\n\t$(AS) -o $@ $<'
+            # 'PRECOMPILED_OBJS+=$(ROOT)/targetlibs/stm32f4/lib/startup_stm32f40_41xxx.o',
         ]
     }
 }
