@@ -39,7 +39,11 @@ info = {
             'USB_HID',
             # 'NET',
             # 'GRAPHICS',
+            # 'TV',
             'FILESYSTEM',
+            # 'WIZNET',
+            # 'CRYPTO','SHA256','SHA512',
+            # 'TLS',
             # 'NEOPIXEL'
         ],
         'makefile' : [
