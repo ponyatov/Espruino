@@ -15,8 +15,19 @@
             ],
             "defines": [
                 "STM32F407xx", "STM32F4",
+                "STM32F405RGT6", "STM32F405xx", "STM32",
                 "__FPU_PRESENT",
-                "RCC", "PWR", "USB"
+                "RCC", "PWR", "USB",
+                "F4DISCO", "ISKRAJS", "HORIZON_LOGO",
+                "DEBUG", "USE_DEBUGGER",
+                "USE_TAB_COMPLETE",
+                "USE_HEATSHRINK",
+                "USE_FILESYSTEM",
+                "USE_USB_HID",
+                "USE_STDPERIPH_DRIVER=1",
+                "ARM", "EMBEDDED",
+                "LINK_TIME_OPTIMISATION",
+                "BTN1_PININDEX", "BTN1_PINSTATE"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
